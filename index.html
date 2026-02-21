@@ -589,7 +589,9 @@ let sb, state = {
 // INIT
 // ================================================================
 document.addEventListener('DOMContentLoaded', () => {
-  sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+    auth: { lock: (name, acquireTimeout, fn) => fn() }
+  });
   initSpriteEditor();
 
   sb.auth.onAuthStateChange(async (event, session) => {
@@ -644,9 +646,10 @@ async function signUp() {
   if (!username || !email || !pass) return showAuthError('Please fill in all fields.');
   if (!/^[a-zA-Z0-9_]{2,20}$/.test(username)) return showAuthError('Username: 2-20 chars, letters/numbers/_ only.');
   if (pass.length < 8) return showAuthError('Password must be at least 8 characters.');
-  const { error } = await sb.auth.signUp({ email, password: pass, options: { data: { username } } });
+  const { data, error } = await sb.auth.signUp({ email, password: pass, options: { data: { username } } });
   if (error) showAuthError(error.message);
-  else showAuthError('Check your email to confirm, then sign in!');
+  else if (data?.user?.identities?.length === 0) showAuthError('This email is already registered. Please sign in, or check your inbox for the original confirmation email.');
+  else showAuthError('Check your email to confirm your account, then sign in!');
 }
 
 async function saveUsername() {
@@ -1306,8 +1309,7 @@ async function addQuest() {
   const type  = document.getElementById('m-quest-type').value;
   const xp    = parseInt(document.getElementById('m-quest-xp').value);
   const stepsRaw = document.getElementById('m-quest-steps').value.trim();
-  const steps = stepsRaw ? stepsRaw.split('\
-').map(s => s.trim()).filter(Boolean) : [];
+  const steps = stepsRaw ? stepsRaw.split('\n').map(s => s.trim()).filter(Boolean) : [];
 
   let partyId = null;
   if (type === 'group' && state.profile?.party_code) {
