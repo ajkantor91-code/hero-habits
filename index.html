@@ -851,7 +851,7 @@ async function completeDaily(id) {
 
   await sb.from('dailies').update({ last_completed: today, streak: newStreak }).eq('id', id);
   await awardXp(daily.xp_reward + newStreak * 2);
-  showToast(`+${daily.xp_reward + newStreak * 2} XP! 🔥 Streak: ${newStreak}', 'xp');
+  showToast(`+${daily.xp_reward + newStreak * 2} XP! 🔥 Streak: ${newStreak}`, 'xp');
   await loadProfile();
   updateNav();
   renderDailies();
