@@ -1,9 +1,9 @@
-<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8" />\n  <meta name="viewport" content="width=device-width, initial-scale=1.0" />\n  <title>QuestLog 🗡️</title>\n  <script src="https://cdn.tailwindcss.com"></script>\n  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>\n  <script src="sprites.js"></script>\n\n  <style>\n    :root {\n      --bg: #0d0d1a;\n      --surface: #12122a;\n      --card: #1a1a38;\n      --border: #2a2a5a;\n      --gold: #f1c40f;\n      --green: #27ae60;\n      --red: #e74c3c;\n      --blue: #3498db;\n      --purple: #8e44ad;\n      --text: #e8e8f0;\n      --muted: #8888aa;\n    }\n\n    * { box-sizing: border-box; }\n\n    body {\n      background: var(--bg);\n      color: var(--text);\n      font-family: 'Segoe UI', system-ui, sans-serif;\n      min-height: 100vh;\n      overflow-x: hidden;\n    }\n\n    /* ──── PIXEL FONT for headers ──── */\n    h1, h2, .pixel-text {\n      font-family: 'Courier New', monospace;\n      letter-spacing: 1px;\n    }\n\n    /* ──── STARS background ──── */\n    body::before {\n      content: '';\n      position: fixed;\n      inset: 0;\n      background-image:\n        radial-gradient(1px 1px at 10% 15%, #fff8 0%, transparent 100%),\n        radial-gradient(1px 1px at 80% 5%,  #fff4 0%, transparent 100%),\n        radial-gradient(1px 1px at 50% 30%, #fff6 0%, transparent 100%),\n        radial-gradient(1px 1px at 20% 65%, #fff5 0%, transparent 100%),\n        radial-gradient(1px 1px at 90% 50%, #fff4 0%, transparent 100%),\n        radial-gradient(1px 1px at 35% 80%, #fff6 0%, transparent 100%),\n        radial-gradient(1px 1px at 65% 90%, #fff4 0%, transparent 100%);\n      pointer-events: none;\n      z-index: 0;\n    }\n\n    /* ──── LAYOUT ──── */\n    #app-shell { position: relative; z-index: 1; display: flex; min-height: 100vh; }\n\n    #sidebar {\n      width: 220px; flex-shrink: 0;\n      background: var(--surface);\n      border-right: 2px solid var(--border);\n      display: flex; flex-direction: column;\n      padding: 1rem 0.75rem;\n      position: fixed; top: 0; left: 0; height: 100vh;\n      z-index: 50;\n    }\n\n    #main-content {\n      margin-left: 220px;\n      flex: 1;\n      padding: 2rem;\n      max-width: 1000px;\n    }\n\n    @media(max-width: 768px) {\n      #sidebar { width: 100%; height: auto; position: relative; flex-direction: row; flex-wrap: wrap; }\n      #main-content { margin-left: 0; padding: 1rem; }\n      #app-shell { flex-direction: column; }\n    }\n\n    /* ──── NAV LINKS ──── */\n    .nav-link {\n      display: flex; align-items: center; gap: 0.6rem;\n      padding: 0.6rem 0.8rem; border-radius: 8px;\n      color: var(--muted); cursor: pointer;\n      transition: all 0.2s; font-size: 0.9rem;\n      border: 1px solid transparent;\n      margin-bottom: 4px;\n      text-decoration: none;\n    }\n    .nav-link:hover { background: var(--card); color: var(--text); border-color: var(--border); }\n    .nav-link.active { background: var(--card); color: var(--gold); border-color: var(--gold); }\n    .nav-icon { font-size: 1.1rem; width: 24px; text-align: center; }\n\n    /* ──── CARDS ──── */\n    .card {\n      background: var(--card);\n      border: 1px solid var(--border);\n      border-radius: 12px;\n      padding: 1.25rem;\n      margin-bottom: 1rem;\n    }\n    .card-gold { border-color: var(--gold); }\n    .card-green { border-color: var(--green); }\n\n    /* ──── BUTTONS ──── */\n    .btn {\n      padding: 0.5rem 1.1rem; border-radius: 8px; font-weight: 600;\n      cursor: pointer; border: 1px solid transparent;\n      transition: all 0.15s; font-size: 0.9rem;\n      display: inline-flex; align-items: center; gap: 0.4rem;\n    }\n    .btn-primary { background: var(--green); color: #fff; border-color: #219a52; }\n    .btn-primary:hover { background: #219a52; }\n    .btn-gold { background: var(--gold); color: #000; border-color: #d4ac0d; }\n    .btn-gold:hover { filter: brightness(0.9); }\n    .btn-danger { background: var(--red); color: #fff; border-color: #c0392b; }\n    .btn-danger:hover { background: #c0392b; }\n    .btn-secondary { background: var(--card); color: var(--text); border-color: var(--border); }\n    .btn-secondary:hover { border-color: var(--muted); }\n    .btn-sm { padding: 0.3rem 0.7rem; font-size: 0.8rem; }\n    .btn:disabled { opacity: 0.5; cursor: not-allowed; }\n\n    /* ──── INPUTS ──── */\n    .input {\n      background: var(--surface); border: 1px solid var(--border);\n      color: var(--text); border-radius: 8px; padding: 0.55rem 0.9rem;\n      font-size: 0.95rem; width: 100%; transition: border-color 0.2s;\n    }\n    .input:focus { outline: none; border-color: var(--gold); }\n    .input::placeholder { color: var(--muted); }\n    select.input option { background: var(--surface); }\n\n    /* ──── XP BAR ──── */\n    .xp-bar-track {\n      background: var(--surface); border: 1px solid var(--border);\n      border-radius: 999px; height: 14px; overflow: hidden;\n    }\n    .xp-bar-fill {\n      height: 100%; border-radius: 999px;\n      background: linear-gradient(90deg, #f39c12, #f1c40f);\n      transition: width 0.5s ease;\n    }\n\n    /* ──── TASK ITEMS ──── */\n    .task-item {\n      display: flex; align-items: center; gap: 0.75rem;\n      padding: 0.8rem 1rem; background: var(--surface);\n      border: 1px solid var(--border); border-radius: 10px;\n      margin-bottom: 0.5rem; transition: all 0.2s;\n    }\n    .task-item:hover { border-color: var(--muted); }\n    .task-item.completed { opacity: 0.5; }\n    .task-check {\n      width: 26px; height: 26px; border-radius: 6px;\n      border: 2px solid var(--border); background: var(--card);\n      cursor: pointer; flex-shrink: 0; display: flex; align-items: center;\n      justify-content: center; transition: all 0.2s;\n    }\n    .task-check:hover { border-color: var(--green); }\n    .task-check.done { background: var(--green); border-color: var(--green); color: #fff; }\n\n    /* ──── BADGES ──── */\n    .badge {\n      font-size: 0.72rem; font-weight: 700; padding: 2px 8px;\n      border-radius: 999px; display: inline-block;\n    }\n    .badge-gold { background: #f1c40f22; color: var(--gold); border: 1px solid var(--gold); }\n    .badge-green { background: #27ae6022; color: var(--green); border: 1px solid var(--green); }\n    .badge-red { background: #e74c3c22; color: var(--red); border: 1px solid var(--red); }\n    .badge-blue { background: #3498db22; color: var(--blue); border: 1px solid var(--blue); }\n    .badge-purple { background: #8e44ad22; color: var(--purple); border: 1px solid var(--purple); }\n\n    /* ──── SPRITE PREVIEW ──── */\n    .sprite-preview { image-rendering: pixelated; }\n\n    /* ──── TOAST ──── */\n    #toast-container {\n      position: fixed; bottom: 2rem; right: 2rem; z-index: 999;\n      display: flex; flex-direction: column; gap: 0.5rem;\n    }\n    .toast {\n      padding: 0.75rem 1.2rem; border-radius: 10px; font-weight: 600;\n      background: var(--card); border: 1px solid var(--green); color: var(--green);\n      animation: slideIn 0.3s ease; max-width: 320px;\n    }\n    .toast.error { border-color: var(--red); color: var(--red); }\n    .toast.xp { border-color: var(--gold); color: var(--gold); }\n    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: none; opacity: 1; } }\n\n    /* ──── MODAL ──── */\n    .modal-backdrop {\n      position: fixed; inset: 0; background: #0008; z-index: 100;\n      display: flex; align-items: center; justify-content: center; padding: 1rem;\n    }\n    .modal {\n      background: var(--card); border: 2px solid var(--border);\n      border-radius: 16px; padding: 1.75rem; width: 100%; max-width: 480px;\n      animation: modalIn 0.25s ease;\n    }\n    @keyframes modalIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }\n\n    /* ──── LEADERBOARD ──── */\n    .lb-row {\n      display: flex; align-items: center; gap: 1rem;\n      padding: 0.85rem 1rem; border-radius: 10px;\n      background: var(--surface); border: 1px solid var(--border);\n      margin-bottom: 0.5rem;\n    }\n    .lb-rank { font-size: 1.2rem; font-weight: 700; width: 36px; text-align: center; }\n\n    /* ──── QUEST PROGRESS ──── */\n    .step-item {\n      display: flex; align-items: center; gap: 0.75rem;\n      padding: 0.6rem; border-radius: 8px;\n      background: var(--surface); margin-bottom: 4px;\n    }\n    .step-dot {\n      width: 22px; height: 22px; border-radius: 50%;\n      border: 2px solid var(--border); flex-shrink: 0;\n      display: flex; align-items: center; justify-content: center;\n      font-size: 0.7rem;\n    }\n    .step-dot.done { background: var(--green); border-color: var(--green); }\n\n    /* ──── SPRITE EDITOR ──── */\n    .color-swatch {\n      width: 36px; height: 36px; border-radius: 8px; cursor: pointer;\n      border: 3px solid transparent; transition: all 0.15s;\n    }\n    .color-swatch.selected { border-color: #fff; transform: scale(1.15); }\n    .sprite-type-btn {\n      padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer;\n      background: var(--surface); border: 2px solid var(--border);\n      transition: all 0.2s; font-size: 0.85rem; color: var(--text);\n    }\n    .sprite-type-btn.selected { border-color: var(--gold); color: var(--gold); }\n\n    /* ──── PAGES ──── */\n    .page { display: none; }\n    .page.active { display: block; }\n\n    /* ──── AUTH PAGE ──── */\n    #page-auth {\n      display: flex; min-height: 100vh;\n      align-items: center; justify-content: center;\n    }\n    .auth-box {\n      background: var(--card); border: 2px solid var(--border);\n      border-radius: 16px; padding: 2.5rem; width: 100%; max-width: 420px;\n    }\n\n    /* ──── STREAK BADGE ──── */\n    .streak-flame { animation: flicker 1s ease-in-out infinite alternate; }\n    @keyframes flicker { from { opacity: 0.8; } to { opacity: 1; } }\n\n    /* ──── SECTION HEADERS ──── */\n    .section-header {\n      display: flex; justify-content: space-between; align-items: center;\n      margin-bottom: 1.25rem;\n    }\n    .section-title {\n      font-size: 1.4rem; font-weight: 700; color: var(--gold);\n      font-family: 'Courier New', monospace;\n    }\n\n    /* ──── LEVEL UP ANIMATION ──── */\n    @keyframes levelUp { 0%{transform:scale(1)} 50%{transform:scale(1.05)} 100%{transform:scale(1)} }\n    .level-up { animation: levelUp 0.6s ease 2; }\n\n    /* Responsive tweaks */\n    @media(max-width:768px) {\n      #sidebar { padding: 0.5rem; }\n      .nav-link span { display: none; }\n      .nav-icon { font-size: 1.3rem; }\n      #main-content { padding: 0.75rem; }\n    }\n  </style>\n</head>\n\n<body>\n\n<!-- ───────────────────────────────────────── AUTH PAGE ───────────────────────────────────────── -->\n<div id="page-auth">\n  <div class="auth-box">\n    <div class="text-center mb-6">\n      <div style="font-size:3rem">🗡️</div>\n      <h1 class="text-2xl font-bold text-yellow-400 mt-2">QuestLog</h1>\n      <p class="text-sm mt-1" style="color:var(--muted)">Your personal RPG life tracker</p>\n    </div>\n\n    <div class="flex gap-2 mb-5">\n      <button class="btn flex-1" id="tab-signin" onclick="switchAuthTab('signin')"\n        style="background:var(--green);color:#fff">Sign In</button>\n      <button class="btn flex-1 btn-secondary" id="tab-signup" onclick="switchAuthTab('signup')">Sign Up</button>\n    </div>\n\n    <div id="auth-form-signin">\n      <div class="mb-3"><input class="input" id="si-email" type="email" placeholder="Email" /></div>\n      <div class="mb-4"><input class="input" id="si-pass" type="password" placeholder="Password" /></div>\n      <button class="btn btn-primary w-full" onclick="signIn()">🗡️ Enter the Realm</button>\n    </div>\n\n    <div id="auth-form-signup" class="hidden">\n      <div class="mb-3"><input class="input" id="su-username" type="text" placeholder="Hero name" maxlength="20" /></div>\n      <div class="mb-3"><input class="input" id="su-email" type="email" placeholder="Email" /></div>\n      <div class="mb-4"><input class="input" id="su-pass" type="password" placeholder="Password (min 8 chars)" /></div>\n      <button class="btn btn-primary w-full" onclick="signUp()">🌟 Begin Your Quest</button>\n    </div>\n\n    <p id="auth-error" class="mt-3 text-sm text-center hidden" style="color:var(--red)"></p>\n  </div>\n</div>\n\n<!-- ───────────────────────────────────────── SETUP PAGE ───────────────────────────────────────── -->\n<div id="page-setup" class="hidden" style="display:none;min-height:100vh;align-items:center;justify-content:center">\n  <div class="auth-box" style="max-width:480px">\n    <div class="text-center mb-6">\n      <div style="font-size:2.5rem">🧙</div>\n      <h2 class="text-xl font-bold text-yellow-400">Choose Your Hero</h2>\n      <p class="text-sm mt-1" style="color:var(--muted)">Pick a hero name to begin your journey</p>\n    </div>\n    <div class="mb-4"><input class="input" id="setup-username" type="text" placeholder="Hero name (letters, numbers, _)" maxlength="20" /></div>\n    <button class="btn btn-gold w-full text-lg" onclick="saveUsername()">✨ Start My Journey</button>\n    <p id="setup-error" class="mt-3 text-sm text-center hidden" style="color:var(--red)"></p>\n  </div>\n</div>\n\n<!-- ───────────────────────────────────────── MAIN APP ───────────────────────────────────────── -->\n<div id="app-shell" class="hidden">\n\n  <!-- SIDEBAR -->\n  <nav id="sidebar">\n    <!-- Profile mini-card -->\n    <div class="text-center mb-4 pb-4" style="border-bottom:1px solid var(--border)">\n      <div id="nav-sprite" class="mx-auto mb-2" style="width:64px;height:64px"></div>\n      <div id="nav-username" class="font-bold text-yellow-400 text-sm pixel-text"></div>\n      <div id="nav-level" class="text-xs mt-1" style="color:var(--muted)"></div>\n      <div class="xp-bar-track mt-2">\n        <div id="nav-xp-bar" class="xp-bar-fill" style="width:0%"></div>\n      </div>\n    </div>\n\n    <a class="nav-link active" data-page="dashboard" onclick="showPage('dashboard')">\n      <span class="nav-icon">🏰</span><span>Dashboard</span>\n    </a>\n    <a class="nav-link" data-page="dailies" onclick="showPage('dailies')">\n      <span class="nav-icon">📅</span><span>Dailies</span>\n    </a>\n    <a class="nav-link" data-page="todos" onclick="showPage('todos')">\n      <span class="nav-icon">📋</span><span>To-Dos</span>\n    </a>\n    <a class="nav-link" data-page="quests" onclick="showPage('quests')">\n      <span class="nav-icon">🗡️</span><span>Quests</span>\n    </a>\n    <a class="nav-link" data-page="sprite" onclick="showPage('sprite')">\n      <span class="nav-icon">🎨</span><span>My Hero</span>\n    </a>\n    <a class="nav-link" data-page="leaderboard" onclick="showPage('leaderboard')">\n      <span class="nav-icon">🏆</span><span>Party</span>\n    </a>\n\n    <div class="flex-1"></div>\n    <button class="nav-link w-full text-left" onclick="signOut()" style="color:var(--red);margin-top:auto">\n      <span class="nav-icon">🚪</span><span>Sign Out</span>\n    </button>\n  </nav>\n\n  <!-- MAIN CONTENT -->\n  <div id="main-content">\n\n    <!-- ══ DASHBOARD ══ -->\n    <div id="page-dashboard" class="page active">\n      <div class="section-header">\n        <h2 class="section-title">🏰 Dashboard</h2>\n        <div id="dash-date" class="text-sm" style="color:var(--muted)"></div>\n      </div>\n\n      <!-- Hero card -->\n      <div class="card card-gold mb-4">\n        <div class="flex items-center gap-4">\n          <div id="dash-sprite" style="image-rendering:pixelated;flex-shrink:0"></div>\n          <div class="flex-1 min-w-0">\n            <div class="flex items-center gap-2 mb-1">\n              <span id="dash-username" class="text-xl font-bold text-yellow-400 pixel-text"></span>\n              <span id="dash-level-badge" class="badge badge-gold"></span>\n            </div>\n            <div class="text-sm mb-2" style="color:var(--muted)">\n              <span id="dash-xp-text"></span>\n            </div>\n            <div class="xp-bar-track">\n              <div id="dash-xp-bar" class="xp-bar-fill" style="width:0%"></div>\n            </div>\n            <div class="text-xs mt-1" style="color:var(--muted)" id="dash-xp-progress"></div>\n          </div>\n        </div>\n      </div>\n\n      <!-- Quick stats -->\n      <div class="grid grid-cols-3 gap-3 mb-4">\n        <div class="card text-center">\n          <div class="text-2xl font-bold text-yellow-400" id="stat-streak">0</div>\n          <div class="text-xs mt-1" style="color:var(--muted)">🔥 Best Streak</div>\n        </div>\n        <div class="card text-center">\n          <div class="text-2xl font-bold" style="color:var(--green)" id="stat-todos">0</div>\n          <div class="text-xs mt-1" style="color:var(--muted)">✅ Tasks Done</div>\n        </div>\n        <div class="card text-center">\n          <div class="text-2xl font-bold" style="color:var(--blue)" id="stat-quests">0</div>\n          <div class="text-xs mt-1" style="color:var(--muted)">🗡️ Quests Done</div>\n        </div>\n      </div>\n\n      <!-- Today's Dailies summary -->\n      <div class="card">\n        <div class="section-header mb-2">\n          <h3 class="font-bold text-yellow-400">📅 Today's Dailies</h3>\n          <a onclick="showPage('dailies')" class="text-sm cursor-pointer" style="color:var(--muted)">View all →</a>\n        </div>\n        <div id="dash-dailies"></div>\n      </div>\n\n      <!-- Active quests summary -->\n      <div class="card">\n        <div class="section-header mb-2">\n          <h3 class="font-bold text-yellow-400">🗡️ Active Quests</h3>\n          <a onclick="showPage('quests')" class="text-sm cursor-pointer" style="color:var(--muted)">View all →</a>\n        </div>\n        <div id="dash-quests"></div>\n      </div>\n    </div>\n\n    <!-- ══ DAILIES ══ -->\n    <div id="page-dailies" class="page">\n      <div class="section-header">\n        <h2 class="section-title">📅 Dailies</h2>\n        <button class="btn btn-primary btn-sm" onclick="openModal('daily')">+ Add Daily</button>\n      </div>\n      <p class="text-sm mb-4" style="color:var(--muted)">Complete them every day to build streaks and earn XP!</p>\n      <div id="dailies-list"></div>\n    </div>\n\n    <!-- ══ TODOS ══ -->\n    <div id="page-todos" class="page">\n      <div class="section-header">\n        <h2 class="section-title">📋 To-Dos</h2>\n        <button class="btn btn-primary btn-sm" onclick="openModal('todo')">+ Add Task</button>\n      </div>\n      <div class="flex gap-2 mb-4">\n        <button class="btn btn-sm btn-secondary" id="filter-all" onclick="setTodoFilter('all')">All</button>\n        <button class="btn btn-sm btn-secondary" id="filter-active" onclick="setTodoFilter('active')">Active</button>\n        <button class="btn btn-sm btn-secondary" id="filter-done" onclick="setTodoFilter('done')">Completed</button>\n      </div>\n      <div id="todos-list"></div>\n    </div>\n\n    <!-- ══ QUESTS ══ -->\n    <div id="page-quests" class="page">\n      <div class="section-header">\n        <h2 class="section-title">🗡️ Quests</h2>\n        <button class="btn btn-primary btn-sm" onclick="openModal('quest')">+ New Quest</button>\n      </div>\n      <div class="flex gap-2 mb-4">\n        <button class="btn btn-sm btn-secondary" id="qfilter-active" onclick="setQuestFilter('active')">Active</button>\n        <button class="btn btn-sm btn-secondary" id="qfilter-completed" onclick="setQuestFilter('completed')">Completed</button>\n      </div>\n      <div id="quests-list"></div>\n    </div>\n\n    <!-- ══ SPRITE EDITOR ══ -->\n    <div id="page-sprite" class="page">\n      <div class="section-header">\n        <h2 class="section-title">🎨 My Hero</h2>\n        <button class="btn btn-gold btn-sm" onclick="saveSprite()">💾 Save Hero</button>\n      </div>\n\n      <div class="grid gap-4" style="grid-template-columns: auto 1fr">\n\n        <!-- Preview -->\n        <div class="card text-center" style="min-width:180px">\n          <h3 class="font-bold mb-4" style="color:var(--muted)">Preview</h3>\n          <div id="sprite-preview" class="mx-auto" style="display:inline-block"></div>\n          <div id="sprite-type-name" class="mt-3 font-bold text-yellow-400 text-sm"></div>\n          <div class="text-xs mt-1" style="color:var(--muted)">Your avatar</div>\n        </div>\n\n        <!-- Controls -->\n        <div>\n          <!-- Character type -->\n          <div class="card mb-3">\n            <h3 class="font-bold mb-3 text-yellow-400">Character Class</h3>\n            <div class="flex flex-wrap gap-2" id="type-buttons"></div>\n          </div>\n\n          <!-- Skin tone -->\n          <div class="card mb-3">\n            <h3 class="font-bold mb-3 text-yellow-400">Skin Tone</h3>\n            <div class="flex flex-wrap gap-2" id="skin-swatches"></div>\n          </div>\n\n          <!-- Hair color -->\n          <div class="card mb-3">\n            <h3 class="font-bold mb-3 text-yellow-400">Hair / Hat Color</h3>\n            <div class="flex flex-wrap gap-2" id="hair-swatches"></div>\n          </div>\n\n          <!-- Outfit color -->\n          <div class="card mb-3">\n            <h3 class="font-bold mb-3 text-yellow-400">Outfit Color</h3>\n            <div class="flex flex-wrap gap-2" id="outfit-swatches"></div>\n          </div>\n\n          <!-- Accent color -->\n          <div class="card">\n            <h3 class="font-bold mb-3 text-yellow-400">Accent / Weapon Color</h3>\n            <div class="flex flex-wrap gap-2" id="accent-swatches"></div>\n          </div>\n        </div>\n      </div>\n    </div>\n\n    <!-- ══ PARTY / LEADERBOARD ══ -->\n    <div id="page-leaderboard" class="page">\n      <div class="section-header">\n        <h2 class="section-title">🏆 Party</h2>\n      </div>\n\n      <!-- Party management -->\n      <div class="card mb-4" id="party-section">\n        <h3 class="font-bold text-yellow-400 mb-3">Your Party</h3>\n        <div id="party-info"></div>\n      </div>\n\n      <!-- Leaderboard -->\n      <div class="card">\n        <h3 class="font-bold text-yellow-400 mb-4">🗡️ Party Leaderboard</h3>\n        <div id="leaderboard-list"></div>\n      </div>\n    </div>\n\n  </div><!-- /main-content -->\n</div><!-- /app-shell -->\n\n<!-- ───────────────────────────────────────── MODALS ───────────────────────────────────────── -->\n<div id="modal-backdrop" class="modal-backdrop hidden" onclick="closeModalOutside(event)">\n  <div class="modal" onclick="event.stopPropagation()">\n    <div id="modal-content"></div>\n  </div>\n</div>\n\n<!-- ───────────────────────────────────────── TOAST ───────────────────────────────────────── -->\n<div id="toast-container"></div>\n\n<script>\n// ================================================================\n// CONSTANTS\n// ================================================================\nconst SUPABASE_URL  = 'https://ojxgactkikbjdfneeaps.supabase.co';\nconst SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qeGdhY3RraWtiamRmbmVlYXBzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MDgxMDYsImV4cCI6MjA4Njk4NDEwNn0.rocUpqgPFmSuqTOVvRamZGqta15J0Md-eBn4lPtT2Bo';\n\nconst SKIN_COLORS  = ['#FDDBB4','#F5CBA7','#E59866','#CA9B6A','#8D5524','#4A2C0A'];\nconst HAIR_COLORS  = ['#f1c40f','#27ae60','#2980b9','#e74c3c','#8e44ad','#2c3e50','#ecf0f1','#e67e22'];\nconst OUTFIT_COLORS= ['#27ae60','#2980b9','#e74c3c','#8e44ad','#e67e22','#2c3e50','#16a085','#c0392b'];\nconst ACCENT_COLORS= ['#f1c40f','#f39c12','#ecf0f1','#e74c3c','#3498db','#1abc9c'];\nconst SPRITE_TYPES = [\n  { id:'hero',     label:'Hero',     icon:'🗡️' },\n  { id:'mage',     label:'Mage',     icon:'🔮' },\n  { id:'warrior',  label:'Warrior',  icon:'🛡️' },\n  { id:'archer',   label:'Archer',   icon:'🏹' },\n  { id:'princess', label:'Royal',    icon:'👑' },\n];\n\n// ================================================================\n// STATE\n// ================================================================\nlet sb, state = {\n  user: null, profile: null,\n  dailies: [], todos: [], quests: [], userQuests: [],\n  todoFilter: 'active', questFilter: 'active',\n  editSprite: null,\n};\n\n// ================================================================\n// INIT\n// ================================================================\ndocument.addEventListener('DOMContentLoaded', () => {\n  sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);\n  initSpriteEditor();\n\n  sb.auth.onAuthStateChange(async (event, session) => {\n    if (session) {\n      state.user = session.user;\n      await loadProfile();\n      if (!state.profile || !state.profile.username) {\n        showAuthPage('setup');\n      } else {\n        showApp();\n      }\n    } else {\n      state.user = null; state.profile = null;\n      showAuthPage('signin');\n    }\n  });\n\n  document.getElementById('dash-date').textContent = new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});\n\n  // Enter key handlers\n  ['si-email','si-pass'].forEach(id => document.getElementById(id)?.addEventListener('keydown', e => { if(e.key==='Enter') signIn(); }));\n  ['su-email','su-pass','su-username'].forEach(id => document.getElementById(id)?.addEventListener('keydown', e => { if(e.key==='Enter') signUp(); }));\n  document.getElementById('setup-username')?.addEventListener('keydown', e => { if(e.key==='Enter') saveUsername(); });\n});\n\n// ================================================================\n// AUTH\n// ================================================================\nfunction switchAuthTab(tab) {\n  const isSignin = tab === 'signin';\n  document.getElementById('auth-form-signin').classList.toggle('hidden', !isSignin);\n  document.getElementById('auth-form-signup').classList.toggle('hidden', isSignin);\n  document.getElementById('tab-signin').style.background = isSignin ? 'var(--green)' : 'var(--card)';\n  document.getElementById('tab-signin').style.color = isSignin ? '#fff' : 'var(--text)';\n  document.getElementById('tab-signup').style.background = !isSignin ? 'var(--green)' : 'var(--card)';\n  document.getElementById('tab-signup').style.color = !isSignin ? '#fff' : 'var(--text)';\n  document.getElementById('auth-error').classList.add('hidden');\n}\n\nasync function signIn() {\n  const email = document.getElementById('si-email').value.trim();\n  const pass  = document.getElementById('si-pass').value;\n  if (!email || !pass) return showAuthError('Please fill in all fields.');\n  const { error } = await sb.auth.signInWithPassword({ email, password: pass });\n  if (error) showAuthError(error.message);\n}\n\nasync function signUp() {\n  const username = document.getElementById('su-username').value.trim();\n  const email    = document.getElementById('su-email').value.trim();\n  const pass     = document.getElementById('su-pass').value;\n  if (!username || !email || !pass) return showAuthError('Please fill in all fields.');\n  if (!/^[a-zA-Z0-9_]{2,20}$/.test(username)) return showAuthError('Username: 2-20 chars, letters/numbers/_ only.');\n  if (pass.length < 8) return showAuthError('Password must be at least 8 characters.');\n  const { error } = await sb.auth.signUp({ email, password: pass, options: { data: { username } } });\n  if (error) showAuthError(error.message);\n  else showAuthError('Check your email to confirm, then sign in!');\n}\n\nasync function saveUsername() {\n  const username = document.getElementById('setup-username').value.trim();\n  if (!/^[a-zA-Z0-9_]{2,20}$/.test(username)) {\n    document.getElementById('setup-error').textContent = 'Username: 2-20 chars, letters/numbers/_ only.';\n    document.getElementById('setup-error').classList.remove('hidden');\n    return;\n  }\n  const { error } = await sb.from('profiles').upsert({ id: state.user.id, username });\n  if (error) {\n    document.getElementById('setup-error').textContent = error.message;\n    document.getElementById('setup-error').classList.remove('hidden');\n    return;\n  }\n  await loadProfile();\n  showApp();\n}\n\nasync function signOut() {\n  await sb.auth.signOut();\n}\n\nfunction showAuthError(msg) {\n  const el = document.getElementById('auth-error');\n  el.textContent = msg; el.classList.remove('hidden');\n}\n\n// ================================================================\n// PROFILE\n// ================================================================\nasync function loadProfile() {\n  if (!state.user) return;\n  const { data } = await sb.from('profiles').select('*').eq('id', state.user.id).single();\n  state.profile = data;\n  state.editSprite = data?.avatar_json ? { ...data.avatar_json } : {\n    type: 'hero', skinColor: '#F5CBA7', hairColor: '#27ae60', outfitColor: '#27ae60', accentColor: '#f1c40f'\n  };\n}\n\n// ================================================================\n// PAGE ROUTING\n// ================================================================\nfunction showAuthPage(which) {\n  document.getElementById('page-auth').style.display  = which === 'signin' ? 'flex' : 'none';\n  document.getElementById('page-setup').style.display = which === 'setup'  ? 'flex' : 'none';\n  document.getElementById('app-shell').classList.add('hidden');\n}\n\nfunction showApp() {\n  document.getElementById('page-auth').style.display  = 'none';\n  document.getElementById('page-setup').style.display = 'none';\n  document.getElementById('app-shell').classList.remove('hidden');\n  updateNav();\n  showPage('dashboard');\n}\n\nfunction showPage(page) {\n  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));\n  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));\n  document.getElementById('page-' + page)?.classList.add('active');\n  document.querySelector(`[data-page="${page}"]`)?.classList.add('active');\n\n  if (page === 'dashboard')    renderDashboard();\n  if (page === 'dailies')      renderDailies();\n  if (page === 'todos')        renderTodos();\n  if (page === 'quests')       renderQuests();\n  if (page === 'sprite')       renderSpriteEditor();\n  if (page === 'leaderboard')  renderLeaderboard();\n}\n\n// ================================================================\n// NAV / PROFILE BAR\n// ================================================================\nfunction updateNav() {\n  if (!state.profile) return;\n  const { username, xp = 0, level = 1, avatar_json } = state.profile;\n  const cfg = avatar_json || state.editSprite;\n  document.getElementById('nav-username').textContent = username;\n  document.getElementById('nav-level').textContent = `Level ${level}`;\n  document.getElementById('nav-sprite').innerHTML = renderSprite(cfg, 3, true);\n  const { progress } = getXpProgress(xp, level);\n  document.getElementById('nav-xp-bar').style.width = progress + '%';\n}\n\n// ================================================================\n// DASHBOARD\n// ================================================================\nasync function renderDashboard() {\n  if (!state.profile) return;\n  const { username, xp = 0, level = 1, avatar_json } = state.profile;\n  const cfg = avatar_json || state.editSprite || {};\n\n  document.getElementById('dash-username').textContent = username;\n  document.getElementById('dash-level-badge').textContent = `⭐ LVL ${level}`;\n  document.getElementById('dash-sprite').innerHTML = renderSprite(cfg, 5, true);\n\n  const { current, next, progress } = getXpProgress(xp, level);\n  document.getElementById('dash-xp-text').textContent = `${xp} XP total`;\n  document.getElementById('dash-xp-bar').style.width = progress + '%';\n  document.getElementById('dash-xp-progress').textContent = `${xp - current} / ${next - current} XP to Level ${level + 1}`;\n\n  // Load all data\n  const [{ data: dailies }, { data: todos }, { data: uq }] = await Promise.all([\n    sb.from('dailies').select('*').eq('user_id', state.user.id),\n    sb.from('todos').select('*').eq('user_id', state.user.id),\n    sb.from('user_quests').select('*').eq('user_id', state.user.id),\n  ]);\n\n  state.dailies    = dailies  || [];\n  state.todos      = todos    || [];\n  state.userQuests = uq       || [];\n\n  // Stats\n  const today = new Date().toISOString().slice(0, 10);\n  const bestStreak = state.dailies.reduce((m, d) => Math.max(m, d.streak || 0), 0);\n  const doneTodos  = state.todos.filter(t => t.completed).length;\n  const doneQuests = state.userQuests.filter(q => q.completed).length;\n\n  document.getElementById('stat-streak').textContent = bestStreak;\n  document.getElementById('stat-todos').textContent  = doneTodos;\n  document.getElementById('stat-quests').textContent = doneQuests;\n\n  // Today's dailies preview\n  const todayDailies = state.dailies.filter(d => d.last_completed !== today);\n  const ddEl = document.getElementById('dash-dailies');\n  if (!state.dailies.length) {\n    ddEl.innerHTML = '<p style="color:var(--muted);font-size:.9rem">No dailies yet. <a onclick="showPage(\'dailies\')" class="cursor-pointer" style="color:var(--gold)">Add some →</a></p>';\n  } else if (!todayDailies.length) {\n    ddEl.innerHTML = '<p style="color:var(--green);font-size:.9rem">🎉 All dailies completed today!</p>';\n  } else {\n    ddEl.innerHTML = todayDailies.slice(0, 3).map(d =>\n      `<div class="task-item"><div class="task-check" onclick="completeDaily('${d.id}')"></div>\n       <span>${d.title}</span>\n       <span class="ml-auto badge badge-gold">+${d.xp_reward} XP</span></div>`\n    ).join('') + (todayDailies.length > 3 ? `<p class="text-sm mt-1" style="color:var(--muted)">+${todayDailies.length - 3} more</p>` : '');\n  }\n\n  // Active quests\n  const aqEl = document.getElementById('dash-quests');\n  const activeUQ = state.userQuests.filter(q => !q.completed).slice(0, 3);\n  if (!activeUQ.length) {\n    aqEl.innerHTML = '<p style="color:var(--muted);font-size:.9rem">No active quests. <a onclick="showPage(\'quests\')" class="cursor-pointer" style="color:var(--gold)">Start one →</a></p>';\n  } else {\n    const { data: qs } = await sb.from('quests').select('*').in('id', activeUQ.map(q => q.quest_id));\n    aqEl.innerHTML = (qs || []).map(q => {\n      const uq = activeUQ.find(u => u.quest_id === q.id);\n      const steps = Array.isArray(q.steps) ? q.steps : [];\n      const pct = steps.length ? Math.round((uq.current_step / steps.length) * 100) : 0;\n      return `<div class="task-item flex-col" style="align-items:flex-start">\n        <div class="flex w-full items-center gap-2">\n          <span>${q.type === 'group' ? '👥' : '🗡️'}</span>\n          <span class="font-semibold">${q.title}</span>\n          <span class="ml-auto text-xs" style="color:var(--muted)">${uq.current_step}/${steps.length} steps</span>\n        </div>\n        <div class="xp-bar-track w-full mt-2"><div class="xp-bar-fill" style="width:${pct}%;background:linear-gradient(90deg,#3498db,#2980b9)"></div></div>\n      </div>`\n    }).join('');\n  }\n}\n\n// ================================================================\n// DAILIES\n// ================================================================\nasync function loadDailies() {\n  const { data } = await sb.from('dailies').select('*').eq('user_id', state.user.id).order('created_at');\n  state.dailies = data || [];\n}\n\nasync function renderDailies() {\n  await loadDailies();\n  const today = new Date().toISOString().slice(0, 10);\n  const el = document.getElementById('dailies-list');\n  if (!state.dailies.length) {\n    el.innerHTML = '<div class="card text-center" style="color:var(--muted)"><p>No dailies yet.</p><p class="text-sm mt-1">Add recurring tasks you want to do every day!</p></div>';\n    return;\n  }\n  el.innerHTML = state.dailies.map(d => {\n    const done = d.last_completed === today;\n    return `<div class="task-item ${done ? 'completed' : ''}"\n      <div class="task-check ${done ? 'done' : ''}" onclick="${done ? '' : `completeDaily('${d.id}')`}"\n        ${done ? '✓' : ''}\n      </div>\n      <div class="flex-1 min-w-0">\n        <div class="font-semibold">${d.title}</div>\n        ${d.description ? `<div class="text-xs mt-0.5" style="color:var(--muted)">${d.description}</div>` : ''}\n      </div>\n      ${d.streak > 0 ? `<span class="badge badge-gold streak-flame">🔥 ${d.streak}</span>` : ''}\n      <span class="badge badge-green">+${d.xp_reward} XP</span>\n      <button class="btn btn-danger btn-sm" onclick="deleteDaily('${d.id}')">🗑</button>\n    </div>`;\n  }).join('');\n}\n\nasync function completeDaily(id) {\n  const today = new Date().toISOString().slice(0, 10);\n  const daily = state.dailies.find(d => d.id === id);\n  if (!daily || daily.last_completed === today) return;\n\n  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);\n  const newStreak = daily.last_completed === yesterday ? (daily.streak || 0) + 1 : 1;\n\n  await sb.from('dailies').update({ last_completed: today, streak: newStreak }).eq('id', id);\n  await awardXp(daily.xp_reward + newStreak * 2);\n  showToast(`+${daily.xp_reward + newStreak * 2} XP! 🔥 Streak: ${newStreak}', 'xp');\n  await loadProfile();\n  updateNav();\n  renderDailies();\n}\n\nasync function deleteDaily(id) {\n  await sb.from('dailies').delete().eq('id', id);\n  renderDailies();\n}\n\n// ================================================================\n// TODOS\n// ================================================================\nconst DIFFICULTY_XP = { easy: 10, medium: 20, hard: 35 };\nconst DIFFICULTY_LABELS = { easy: '🟢 Easy', medium: '🟡 Medium', hard: '🔴 Hard' };\n\nfunction setTodoFilter(f) {\n  state.todoFilter = f;\n  ['all','active','done'].forEach(k => {\n    document.getElementById('filter-' + k)?.classList.toggle('btn-primary', k === f);\n    document.getElementById('filter-' + k)?.classList.toggle('btn-secondary', k !== f);\n  });\n  renderTodos();\n}\n\nasync function loadTodos() {\n  const { data } = await sb.from('todos').select('*').eq('user_id', state.user.id).order('created_at', { ascending: false });\n  state.todos = data || [];\n}\n\nasync function renderTodos() {\n  await loadTodos();\n  const el = document.getElementById('todos-list');\n  let items = state.todos;\n  if (state.todoFilter === 'active') items = items.filter(t => !t.completed);\n  if (state.todoFilter === 'done')   items = items.filter(t => t.completed);\n\n  if (!items.length) {\n    el.innerHTML = `<div class="card text-center" style="color:var(--muted)"><p>${state.todoFilter === 'done' ? 'No completed tasks yet.' : 'No tasks here!'}</p></div>`;\n    return;\n  }\n  el.innerHTML = items.map(t => {\n    const badgeClass = t.difficulty === 'easy' ? 'badge-green' : t.difficulty === 'hard' ? 'badge-red' : 'badge-gold';\n    return `<div class="task-item ${t.completed ? 'completed' : ''}"\n      <div class="task-check ${t.completed ? 'done' : ''}" onclick="${t.completed ? '' : `completeTodo('${t.id}')`}"\n        ${t.completed ? '✓' : ''}\n      </div>\n      <div class="flex-1 min-w-0">\n        <div class="font-semibold ${t.completed ? 'line-through' : ''}">${t.title}</div>\n        ${t.description ? `<div class="text-xs mt-0.5" style="color:var(--muted)">${t.description}</div>` : ''}\n      </div>\n      <span class="badge ${badgeClass}">${DIFFICULTY_LABELS[t.difficulty]}</span>\n      <span class="badge badge-green">+${t.xp_reward} XP</span>\n      ${!t.completed ? `<button class="btn btn-danger btn-sm" onclick="deleteTodo('${t.id}')"}>🗑</button>` : ''}\n    </div>`\n  }).join('');\n}\n\nasync function completeTodo(id) {\n  const todo = state.todos.find(t => t.id === id);\n  if (!todo || todo.completed) return;\n  await sb.from('todos').update({ completed: true, completed_at: new Date().toISOString() }).eq('id', id);\n  await awardXp(todo.xp_reward);\n  showToast(`+${todo.xp_reward} XP! Task conquered! 🗡️`, 'xp');\n  await loadProfile();\n  updateNav();\n  renderTodos();\n}\n\nasync function deleteTodo(id) {\n  await sb.from('todos').delete().eq('id', id);\n  renderTodos();\n}\n\n// ================================================================\n// QUESTS\n// ================================================================\nfunction setQuestFilter(f) {\n  state.questFilter = f;\n  ['active','completed'].forEach(k => {\n    document.getElementById('qfilter-' + k)?.classList.toggle('btn-primary', k === f);\n    document.getElementById('qfilter-' + k)?.classList.toggle('btn-secondary', k !== f);\n  });\n  renderQuests();\n}\n\nasync function renderQuests() {\n  const { data: quests } = await sb.from('quests').select('*').eq('created_by', state.user.id).order('created_at', { ascending: false });\n  const { data: uqs }   = await sb.from('user_quests').select('*').eq('user_id', state.user.id);\n  state.quests = quests || [];\n  state.userQuests = uqs || [];\n\n  // Also fetch group quests from party\n  let partyQuests = [];\n  if (state.profile?.party_code) {\n    const { data: party } = await sb.from('parties').select('id').eq('code', state.profile.party_code).single();\n    if (party) {\n      const { data: pqs } = await sb.from('quests').select('*').eq('party_id', party.id);\n      partyQuests = (pqs || []).filter(q => !quests?.find(mq => mq.id === q.id));\n    }\n  }\n\n  const allQuests = [...(quests || []), ...partyQuests];\n  const activeUQIds = (uqs || []).filter(u => !u.completed).map(u => u.quest_id);\n  const doneUQIds   = (uqs || []).filter(u => u.completed).map(u => u.quest_id);\n\n  let displayed = allQuests.filter(q =>\n    state.questFilter === 'active' ? activeUQIds.includes(q.id) || !doneUQIds.includes(q.id) : doneUQIds.includes(q.id)\n  );\n\n  const el = document.getElementById('quests-list');\n  if (!displayed.length) {\n    el.innerHTML = `<div class="card text-center" style="color:var(--muted)"><p>${state.questFilter === 'completed' ? 'No completed quests yet.' : 'No quests! Create one to begin your adventure.'}</p></div>`;\n    return;\n  }\n\n  el.innerHTML = displayed.map(q => {\n    const uq = (uqs || []).find(u => u.quest_id === q.id);\n    const steps = Array.isArray(q.steps) ? q.steps : [];\n    const currentStep = uq ? uq.current_step : 0;\n    const isDone = uq?.completed;\n    const pct = steps.length ? Math.round((currentStep / steps.length) * 100) : 0;\n\n    return `<div class="card ${isDone ? 'opacity-60' : ''}"\n      <div class="flex items-start gap-3 mb-3">\n        <span style="font-size:1.5rem">${q.type === 'group' ? '👥' : '🗡️'}</span>\n        <div class="flex-1">\n          <div class="font-bold text-lg">${q.title}</div>\n          ${q.description ? `<div class="text-sm mt-1" style="color:var(--muted)">${q.description}</div>` : ''}\n          <div class="flex gap-2 mt-2">\n            <span class="badge ${q.type === 'group' ? 'badge-blue' : 'badge-purple'}">${q.type === 'group' ? '👥 Group' : '🗡️ Solo'}</span>\n            <span class="badge badge-gold">🏆 ${q.xp_reward} XP</span>\n            ${isDone ? '<span class="badge badge-green">✅ Complete!</span>' : ''}\n          </div>\n        </div>\n      </div>\n\n      ${steps.length ? `\n        <div class="mb-3">\n          <div class="flex justify-between text-xs mb-1" style="color:var(--muted)">\n            <span>Progress: ${currentStep}/${steps.length} steps</span><span>${pct}%</span>\n          </div>\n          <div class="xp-bar-track"><div class="xp-bar-fill" style="width:${pct}%;background:linear-gradient(90deg,#8e44ad,#9b59b6)"></div></div>\n        </div>\n        <div class="mb-3">\n          ${steps.map((s, i) => `\n            <div class="step-item">\n              <div class="step-dot ${i < currentStep ? 'done' : ''}">${i < currentStep ? '✓' : i + 1}</div>\n              <span class="${i < currentStep ? 'line-through' : ''}" style="${i < currentStep ? 'color:var(--muted)' : ''}">${s}</span>\n              ${i === currentStep && !isDone && uq ? `<button class="btn btn-sm btn-primary ml-auto" onclick="advanceQuest('${q.id}','${uq?.id}',${currentStep},${steps.length},${q.xp_reward})">Complete Step ✓</button>` : ''}\n            </div>\n          `).join('')}\n        </div>\n      ` : ''}\n\n      <div class="flex gap-2">\n        ${!uq && !isDone ? `<button class="btn btn-primary btn-sm" onclick="startQuest('${q.id}')">🗡️ Start Quest</button>` : ''}\n        ${isDone ? '<span style="color:var(--green);font-size:.9rem">✅ Quest Complete!</span>' : ''}\n        ${q.created_by === state.user.id ? `<button class="btn btn-danger btn-sm ml-auto" onclick="deleteQuest('${q.id}')">🗑</button>` : ''}\n      </div>\n    </div>`;\n  }).join('');\n}\n\nasync function startQuest(questId) {\n  await sb.from('user_quests').insert({ user_id: state.user.id, quest_id: questId, current_step: 0 });\n  showToast('Quest started! Good luck, hero! 🗡️');\n  renderQuests();\n}\n\nasync function advanceQuest(questId, uqId, currentStep, totalSteps, xpReward) {\n  const nextStep = currentStep + 1;\n  const isLast = nextStep >= totalSteps;\n\n  if (isLast) {\n    await sb.from('user_quests').update({ current_step: nextStep, completed: true, completed_at: new Date().toISOString() }).eq('id', uqId);\n    await awardXp(xpReward);\n    showToast(`🏆 Quest Complete! +${xpReward} XP!`, 'xp');\n  } else {\n    await sb.from('user_quests').update({ current_step: nextStep }).eq('id', uqId);\n    await awardXp(25);\n    showToast(`Step complete! +25 XP`, 'xp');\n  }\n  await loadProfile(); updateNav(); renderQuests();\n}\n\nasync function deleteQuest(id) {\n  await sb.from('quests').delete().eq('id', id);\n  renderQuests();\n}\n\n// ================================================================\n// SPRITE EDITOR\n// ================================================================\nfunction initSpriteEditor() {\n  // Type buttons\n  const typeEl = document.getElementById('type-buttons');\n  if (!typeEl) return;\n  typeEl.innerHTML = SPRITE_TYPES.map(t =>\n    `<button class="sprite-type-btn" id="type-${t.id}" onclick="setSpriteType('${t.id}')">${t.icon} ${t.label}</button>`\n  ).join('');\n\n  // Color swatches\n  renderSwatches('skin-swatches',   SKIN_COLORS,   'skinColor');\n  renderSwatches('hair-swatches',   HAIR_COLORS,   'hairColor');\n  renderSwatches('outfit-swatches', OUTFIT_COLORS, 'outfitColor');\n  renderSwatches('accent-swatches', ACCENT_COLORS, 'accentColor');\n}\n\nfunction renderSwatches(containerId, colors, key) {\n  const el = document.getElementById(containerId);\n  if (!el) return;\n  el.innerHTML = colors.map(c =>\n    `<div class="color-swatch" id="swatch-${key}-${c.replace('#','')}"\n      style="background:${c}" onclick="setSpriteColor('${key}','${c}')"></div>`\n  ).join('');\n}\n\nfunction renderSpriteEditor() {\n  const cfg = state.editSprite || {};\n  updateSpritePreview();\n  // Highlight selected type\n  SPRITE_TYPES.forEach(t => document.getElementById(`type-${t.id}`)?.classList.toggle('selected', t.id === cfg.type));\n  // Highlight selected colors\n  ['skinColor','hairColor','outfitColor','accentColor'].forEach(key => {\n    const val = cfg[key];\n    document.querySelectorAll(`[id^="swatch-${key}-"]`).forEach(sw => sw.classList.remove('selected'));\n    if (val) document.getElementById(`swatch-${key}-${val.replace('#','')}`)?.classList.add('selected');\n  });\n}\n\nfunction setSpriteType(type) {\n  state.editSprite = { ...(state.editSprite || {}), type };\n  SPRITE_TYPES.forEach(t => document.getElementById(`type-${t.id}`)?.classList.toggle('selected', t.id === type));\n  updateSpritePreview();\n}\n\nfunction setSpriteColor(key, color) {\n  state.editSprite = { ...(state.editSprite || {}), [key]: color };\n  document.querySelectorAll(`[id^="swatch-${key}-"]`).forEach(sw => sw.classList.remove('selected'));\n  document.getElementById(`swatch-${key}-${color.replace('#','')}`)?.classList.add('selected');\n  updateSpritePreview();\n}\n\nfunction updateSpritePreview() {\n  const cfg = state.editSprite || {};\n  const previewEl = document.getElementById('sprite-preview');\n  const nameEl    = document.getElementById('sprite-type-name');\n  if (previewEl) previewEl.innerHTML = renderSprite(cfg, 8, true);\n  if (nameEl) nameEl.textContent = SPRITE_TYPES.find(t => t.id === cfg.type)?.label || 'Hero';\n}\n\nasync function saveSprite() {\n  const { error } = await sb.from('profiles').update({ avatar_json: state.editSprite }).eq('id', state.user.id);\n  if (error) { showToast('Failed to save. Try again.', 'error'); return; }\n  state.profile = { ...state.profile, avatar_json: state.editSprite };\n  updateNav();\n  showToast('Hero saved! ✨');\n}\n\n// ================================================================\n// PARTY / LEADERBOARD\n// ================================================================\nasync function renderLeaderboard() {\n  const partyEl = document.getElementById('party-info');\n  const lbEl    = document.getElementById('leaderboard-list');\n  const profile = state.profile;\n\n  if (profile?.party_code) {\n    const { data: party } = await sb.from('parties').select('*').eq('code', profile.party_code).single();\n    partyEl.innerHTML = `\n      <div class="flex items-center gap-3 mb-3">\n        <div>\n          <div class="font-bold text-lg">${party?.name || 'Your Party'}</div>\n          <div class="text-sm" style="color:var(--muted)">Party Code: <span class="badge badge-gold font-mono text-base">${profile.party_code}</span></div>\n          <p class="text-xs mt-1" style="color:var(--muted)">Share this code with friends so they can join!</p>\n        </div>\n      </div>\n      <button class="btn btn-danger btn-sm" onclick="leaveParty()">🚪 Leave Party</button>`;\n\n    // Load leaderboard\n    const { data: members } = await sb.from('profiles').select('id,username,level,xp,avatar_json').eq('party_code', profile.party_code).order('xp', { ascending: false });\n    if (!members?.length) {\n      lbEl.innerHTML = '<p style="color:var(--muted)">No party members yet.</p>';\n      return;\n    }\n    lbEl.innerHTML = members.map((m, i) => {\n      const rankIcon = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i + 1}`;\n      const spriteHtml = renderSprite(m.avatar_json || {}, 3);\n      const { progress } = getXpProgress(m.xp || 0, m.level || 1);\n      return `<div class="lb-row ${m.id === state.user.id ? 'card-gold' : ''}"\n        <div class="lb-rank">${rankIcon}</div>\n        <div style="image-rendering:pixelated">${spriteHtml}</div>\n        <div class="flex-1 min-w-0">\n          <div class="font-bold ${m.id === state.user.id ? 'text-yellow-400' : ''}">${m.username} ${m.id === state.user.id ? '(you)' : ''}</div>\n          <div class="text-xs" style="color:var(--muted)">Level ${m.level || 1} · ${m.xp || 0} XP</div>\n          <div class="xp-bar-track mt-1" style="height:6px"><div class="xp-bar-fill" style="width:${progress}%;height:100%"></div></div>\n        </div>\n        <span class="badge badge-gold">LVL ${m.level || 1}</span>\n      </div>`;\n    }).join('');\n  } else {\n    partyEl.innerHTML = `\n      <p class="text-sm mb-4" style="color:var(--muted)">Join a party to compete on the leaderboard and tackle group quests with friends!</p>\n      <div class="grid gap-3" style="grid-template-columns:1fr 1fr">\n        <div class="card">\n          <h4 class="font-bold text-yellow-400 mb-2">Create Party</h4>\n          <input class="input mb-2" id="party-name-input" placeholder="Party name" />\n          <button class="btn btn-primary w-full" onclick="createParty()">🗡️ Create Party</button>\n        </div>\n        <div class="card">\n          <h4 class="font-bold text-yellow-400 mb-2">Join Party</h4>\n          <input class="input mb-2" id="party-code-input" placeholder="Enter party code" maxlength="6" style="text-transform:uppercase;font-family:monospace;letter-spacing:2px" />\n          <button class="btn btn-secondary w-full" onclick="joinParty()">🚀 Join Party</button>\n        </div>\n      </div>`;\n    lbEl.innerHTML = '<p style="color:var(--muted);font-size:.9rem">Join a party to see the leaderboard!</p>';\n  }\n}\n\nasync function createParty() {\n  const name = document.getElementById('party-name-input')?.value.trim();\n  if (!name) { showToast('Enter a party name!', 'error'); return; }\n  const code = Math.random().toString(36).substring(2, 8).toUpperCase();\n  const { error } = await sb.from('parties').insert({ code, name, created_by: state.user.id });\n  if (error) { showToast('Failed to create party.', 'error'); return; }\n  await sb.from('profiles').update({ party_code: code }).eq('id', state.user.id);\n  await loadProfile();\n  showToast(`Party created! Code: ${code} 🎉`);\n  renderLeaderboard();\n}\n\nasync function joinParty() {\n  const code = document.getElementById('party-code-input')?.value.trim().toUpperCase();\n  if (!code || code.length !== 6) { showToast('Enter a valid 6-character party code!', 'error'); return; }\n  const { data: party } = await sb.from('parties').select('id').eq('code', code).single();\n  if (!party) { showToast('Party not found. Check the code!', 'error'); return; }\n  await sb.from('profiles').update({ party_code: code }).eq('id', state.user.id);\n  await loadProfile();\n  showToast('You joined the party! 🗡️ Let the games begin!');\n  renderLeaderboard();\n}\n\nasync function leaveParty() {\n  await sb.from('profiles').update({ party_code: null }).eq('id', state.user.id);\n  await loadProfile();\n  showToast('Left the party.');\n  renderLeaderboard();\n}\n\n// ================================================================\n// MODALS\n// ================================================================\nfunction openModal(type) {\n  const content = document.getElementById('modal-content');\n  if (type === 'daily') {\n    content.innerHTML = `\n      <h3 class="text-xl font-bold text-yellow-400 mb-4">📅 New Daily</h3>\n      <div class="mb-3"><input class="input" id="m-daily-title" placeholder="e.g. Morning workout, Read 20 pages" /></div>\n      <div class="mb-3"><input class="input" id="m-daily-desc" placeholder="Description (optional)" /></div>\n      <div class="mb-4">\n        <label class="text-sm mb-1 block" style="color:var(--muted)">XP Reward</label>\n        <select class="input" id="m-daily-xp">\n          <option value="5">Easy — 5 XP</option>\n          <option value="10" selected>Medium — 10 XP</option>\n          <option value="20">Hard — 20 XP</option>\n        </select>\n      </div>\n      <div class="flex gap-2">\n        <button class="btn btn-primary flex-1" onclick="addDaily()">✅ Add Daily</button>\n        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>\n      </div>`;\n  } else if (type === 'todo') {\n    content.innerHTML = `\n      <h3 class="text-xl font-bold text-yellow-400 mb-4">📋 New Task</h3>\n      <div class="mb-3"><input class="input" id="m-todo-title" placeholder="What needs to be done?" /></div>\n      <div class="mb-3"><input class="input" id="m-todo-desc" placeholder="Notes (optional)" /></div>\n      <div class="mb-4">\n        <label class="text-sm mb-1 block" style="color:var(--muted)">Difficulty</label>\n        <select class="input" id="m-todo-diff">\n          <option value="easy">🟢 Easy — 10 XP</option>\n          <option value="medium" selected>🟡 Medium — 20 XP</option>\n          <option value="hard">🔴 Hard — 35 XP</option>\n        </select>\n      </div>\n      <div class="flex gap-2">\n        <button class="btn btn-primary flex-1" onclick="addTodo()">✅ Add Task</button>\n        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>\n      </div>`;\n  } else if (type === 'quest') {\n    content.innerHTML = `\n      <h3 class="text-xl font-bold text-yellow-400 mb-4">🗡️ New Quest</h3>\n      <div class="mb-3"><input class="input" id="m-quest-title" placeholder="Quest title" /></div>\n      <div class="mb-3"><input class="input" id="m-quest-desc" plac eholder="Quest description (optional)" /></div>\n      <div class="mb-3">\n        <label class="text-sm mb-1 block" style="color:var(--muted)">Quest Type</label>\n        <select class="input" id="m-quest-type">\n          <option value="solo">🗡️ Solo Quest</option>\n          <option value="group">👥 Group Quest (party)</option>\n        </select>\n      </div>\n      <div class="mb-4">\n        <label class="text-sm mb-1 block" style="color:var(--muted)">Quest Steps (one per line)</label>\n        <textarea class="input" id="m-quest-steps" rows="4" placeholder="Complete the first milestone&#10;Finish the second challenge&#10;Reach the final goal"\n          style="resize:vertical"></textarea>\n      </div>\n      <div class="mb-4">\n        <label class="text-sm mb-1 block" style="color:var(--muted)">XP Reward</label>\n        <select class="input" id="m-quest-xp">\n          <option value="50">50 XP — Short quest</option>\n          <option value="100" selected>100 XP — Standard quest</option>\n          <option value="200">200 XP — Epic quest</option>\n          <option value="500">500 XP — Legendary quest</option>\n        </select>\n      </div>\n      <div class="flex gap-2">\n        <button class="btn btn-primary flex-1" onclick="addQuest()">🗡️ Create Quest</button>\n        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>\n      </div>`;\n  }\n  document.getElementById('modal-backdrop').classList.remove('hidden');\n}\n\nfunction closeModal() { document.getElementById('modal-backdrop').classList.add('hidden'); }\nfunction closeModalOutside(e) { if (e.target.id === 'modal-backdrop') closeModal(); }\n\nasync function addDaily() {\n  const title = document.getElementById('m-daily-title').value.trim();\n  if (!title) { showToast('Enter a title!', 'error'); return; }\n  const xp = parseInt(document.getElementById('m-daily-xp').value);\n  const desc = document.getElementById('m-daily-desc').value.trim();\n  await sb.from('dailies').insert({ user_id: state.user.id, title, description: desc || null, xp_reward: xp });\n  closeModal(); showToast('Daily added! Keep up the streak 🔥');\n  renderDailies();\n}\n\nasync function addTodo() {\n  const title = document.getElementById('m-todo-title').value.trim();\n  if (!title) { showToast('Enter a title!', 'error'); return; }\n  const diff = document.getElementById('m-todo-diff').value;\n  const desc = document.getElementById('m-todo-desc').value.trim();\n  const xp = DIFFICULTY_XP[diff];\n  await sb.from('todos').insert({ user_id: state.user.id, title, description: desc || null, difficulty: diff, xp_reward: xp });\n  closeModal(); showToast('Task added! Get it done, hero! ✅');\n  renderTodos();\n}\n\nasync function addQuest() {\n  const title = document.getElementById('m-quest-title').value.trim();\n  if (!title) { showToast('Enter a quest title!', 'error'); return; }\n  const desc  = document.getElementById('m-quest-desc').value.trim();\n  const type  = document.getElementById('m-quest-type').value;\n  const xp    = parseInt(document.getElementById('m-quest-xp').value);\n  const stepsRaw = document.getElementById('m-quest-steps').value.trim();\n  const steps = stepsRaw ? stepsRaw.split('\\n').map(s => s.trim()).filter(Boolean) : [];\n\n  let partyId = null;\n  if (type === 'group' && state.profile?.party_code) {\n    const { data: party } = await sb.from('parties').select('id').eq('code', state.profile.party_code).single();\n    partyId = party?.id;\n  }\n\n  await sb.from('quests').insert({ title, description: desc || null, type, steps, xp_reward: xp, party_id: partyId, created_by: state.user.id });\n  closeModal(); showToast('Quest created! Your legend begins 🗡️');\n  renderQuests();\n}\n\n// ================================================================\n// XP + LEVELING\n// ================================================================\nasync function awardXp(amount) {\n  const { data, error } = await sb.rpc('award_xp', { p_user_id: state.user.id, xp_amount: amount });\n  if (error) {\n    // Fallback: manual update\n    const { data: prof } = await sb.from('profiles').select('xp,level').eq('id', state.user.id).single();\n    const newXp = (prof?.xp || 0) + amount;\n    const newLevel = getLevelFromXp(newXp);\n    await sb.from('profiles').update({ xp: newXp, level: newLevel }).eq('id', state.user.id);\n    if (newLevel > (prof?.level || 1)) showLevelUp(newLevel);\n    return;\n  }\n  if (data?.[0]?.leveled_up) showLevelUp(data[0].new_level);\n}\n\nfunction showLevelUp(level) {\n  showToast(`🎉 LEVEL UP! You are now Level ${level}!`, 'xp');\n  const dashSprite = document.getElementById('dash-sprite');\n  if (dashSprite) { dashSprite.classList.add('level-up'); setTimeout(() => dashSprite.classList.remove('level-up'), 1200); }\n}\n\n// ================================================================\n// TOAST\n// ================================================================\nfunction showToast(msg, type = 'success') {\n  const container = document.getElementById('toast-container');\n  const el = document.createElement('div');\n  el.className = `toast ${type === 'error' ? 'error' : type === 'xp' ? 'xp' : ''}`;\n  el.textContent = msg;\n  container.appendChild(el);\n  setTimeout(() => el.remove(), 3500);\n}\n\n// ================================================================\n// KEYBOARD SHORTCUTS\n// ================================================================\ndocument.addEventListener('keydown', e => {\n  if (e.key === 'Escape') closeModal();\n});\n</script>\n</body>\n</html><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>QuestLog ⚔️</title>
+  <title>QuestLog 🗡️</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="sprites.js"></script>
@@ -33,13 +33,13 @@
       overflow-x: hidden;
     }
 
-    /* ── PIXEL FONT for headers ── */
+    /* ──── PIXEL FONT for headers ──── */
     h1, h2, .pixel-text {
       font-family: 'Courier New', monospace;
       letter-spacing: 1px;
     }
 
-    /* ── STARS background ── */
+    /* ──── STARS background ──── */
     body::before {
       content: '';
       position: fixed;
@@ -56,7 +56,7 @@
       z-index: 0;
     }
 
-    /* ── LAYOUT ── */
+    /* ──── LAYOUT ──── */
     #app-shell { position: relative; z-index: 1; display: flex; min-height: 100vh; }
 
     #sidebar {
@@ -82,7 +82,7 @@
       #app-shell { flex-direction: column; }
     }
 
-    /* ── NAV LINKS ── */
+    /* ──── NAV LINKS ──── */
     .nav-link {
       display: flex; align-items: center; gap: 0.6rem;
       padding: 0.6rem 0.8rem; border-radius: 8px;
@@ -96,7 +96,7 @@
     .nav-link.active { background: var(--card); color: var(--gold); border-color: var(--gold); }
     .nav-icon { font-size: 1.1rem; width: 24px; text-align: center; }
 
-    /* ── CARDS ── */
+    /* ──── CARDS ──── */
     .card {
       background: var(--card);
       border: 1px solid var(--border);
@@ -107,7 +107,7 @@
     .card-gold { border-color: var(--gold); }
     .card-green { border-color: var(--green); }
 
-    /* ── BUTTONS ── */
+    /* ──── BUTTONS ──── */
     .btn {
       padding: 0.5rem 1.1rem; border-radius: 8px; font-weight: 600;
       cursor: pointer; border: 1px solid transparent;
@@ -125,7 +125,7 @@
     .btn-sm { padding: 0.3rem 0.7rem; font-size: 0.8rem; }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* ── INPUTS ── */
+    /* ──── INPUTS ──── */
     .input {
       background: var(--surface); border: 1px solid var(--border);
       color: var(--text); border-radius: 8px; padding: 0.55rem 0.9rem;
@@ -135,7 +135,7 @@
     .input::placeholder { color: var(--muted); }
     select.input option { background: var(--surface); }
 
-    /* ── XP BAR ── */
+    /* ──── XP BAR ──── */
     .xp-bar-track {
       background: var(--surface); border: 1px solid var(--border);
       border-radius: 999px; height: 14px; overflow: hidden;
@@ -146,7 +146,7 @@
       transition: width 0.5s ease;
     }
 
-    /* ── TASK ITEMS ── */
+    /* ──── TASK ITEMS ──── */
     .task-item {
       display: flex; align-items: center; gap: 0.75rem;
       padding: 0.8rem 1rem; background: var(--surface);
@@ -164,7 +164,7 @@
     .task-check:hover { border-color: var(--green); }
     .task-check.done { background: var(--green); border-color: var(--green); color: #fff; }
 
-    /* ── BADGES ── */
+    /* ──── BADGES ──── */
     .badge {
       font-size: 0.72rem; font-weight: 700; padding: 2px 8px;
       border-radius: 999px; display: inline-block;
@@ -175,10 +175,10 @@
     .badge-blue { background: #3498db22; color: var(--blue); border: 1px solid var(--blue); }
     .badge-purple { background: #8e44ad22; color: var(--purple); border: 1px solid var(--purple); }
 
-    /* ── SPRITE PREVIEW ── */
+    /* ──── SPRITE PREVIEW ──── */
     .sprite-preview { image-rendering: pixelated; }
 
-    /* ── TOAST ── */
+    /* ──── TOAST ──── */
     #toast-container {
       position: fixed; bottom: 2rem; right: 2rem; z-index: 999;
       display: flex; flex-direction: column; gap: 0.5rem;
@@ -192,7 +192,7 @@
     .toast.xp { border-color: var(--gold); color: var(--gold); }
     @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: none; opacity: 1; } }
 
-    /* ── MODAL ── */
+    /* ──── MODAL ──── */
     .modal-backdrop {
       position: fixed; inset: 0; background: #0008; z-index: 100;
       display: flex; align-items: center; justify-content: center; padding: 1rem;
@@ -204,7 +204,7 @@
     }
     @keyframes modalIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-    /* ── LEADERBOARD ── */
+    /* ──── LEADERBOARD ──── */
     .lb-row {
       display: flex; align-items: center; gap: 1rem;
       padding: 0.85rem 1rem; border-radius: 10px;
@@ -213,7 +213,7 @@
     }
     .lb-rank { font-size: 1.2rem; font-weight: 700; width: 36px; text-align: center; }
 
-    /* ── QUEST PROGRESS ── */
+    /* ──── QUEST PROGRESS ──── */
     .step-item {
       display: flex; align-items: center; gap: 0.75rem;
       padding: 0.6rem; border-radius: 8px;
@@ -227,7 +227,7 @@
     }
     .step-dot.done { background: var(--green); border-color: var(--green); }
 
-    /* ── SPRITE EDITOR ── */
+    /* ──── SPRITE EDITOR ──── */
     .color-swatch {
       width: 36px; height: 36px; border-radius: 8px; cursor: pointer;
       border: 3px solid transparent; transition: all 0.15s;
@@ -240,11 +240,11 @@
     }
     .sprite-type-btn.selected { border-color: var(--gold); color: var(--gold); }
 
-    /* ── PAGES ── */
+    /* ──── PAGES ──── */
     .page { display: none; }
     .page.active { display: block; }
 
-    /* ── AUTH PAGE ── */
+    /* ──── AUTH PAGE ──── */
     #page-auth {
       display: flex; min-height: 100vh;
       align-items: center; justify-content: center;
@@ -254,11 +254,11 @@
       border-radius: 16px; padding: 2.5rem; width: 100%; max-width: 420px;
     }
 
-    /* ── STREAK BADGE ── */
+    /* ──── STREAK BADGE ──── */
     .streak-flame { animation: flicker 1s ease-in-out infinite alternate; }
     @keyframes flicker { from { opacity: 0.8; } to { opacity: 1; } }
 
-    /* ── SECTION HEADERS ── */
+    /* ──── SECTION HEADERS ──── */
     .section-header {
       display: flex; justify-content: space-between; align-items: center;
       margin-bottom: 1.25rem;
@@ -268,7 +268,7 @@
       font-family: 'Courier New', monospace;
     }
 
-    /* ── LEVEL UP ANIMATION ── */
+    /* ──── LEVEL UP ANIMATION ──── */
     @keyframes levelUp { 0%{transform:scale(1)} 50%{transform:scale(1.05)} 100%{transform:scale(1)} }
     .level-up { animation: levelUp 0.6s ease 2; }
 
@@ -284,11 +284,11 @@
 
 <body>
 
-<!-- ─────────────────── AUTH PAGE ─────────────────── -->
+<!-- ───────────────────────────────────────── AUTH PAGE ───────────────────────────────────────── -->
 <div id="page-auth">
   <div class="auth-box">
     <div class="text-center mb-6">
-      <div style="font-size:3rem">⚔️</div>
+      <div style="font-size:3rem">🗡️</div>
       <h1 class="text-2xl font-bold text-yellow-400 mt-2">QuestLog</h1>
       <p class="text-sm mt-1" style="color:var(--muted)">Your personal RPG life tracker</p>
     </div>
@@ -302,7 +302,7 @@
     <div id="auth-form-signin">
       <div class="mb-3"><input class="input" id="si-email" type="email" placeholder="Email" /></div>
       <div class="mb-4"><input class="input" id="si-pass" type="password" placeholder="Password" /></div>
-      <button class="btn btn-primary w-full" onclick="signIn()">⚔️ Enter the Realm</button>
+      <button class="btn btn-primary w-full" onclick="signIn()">🗡️ Enter the Realm</button>
     </div>
 
     <div id="auth-form-signup" class="hidden">
@@ -316,7 +316,7 @@
   </div>
 </div>
 
-<!-- ─────────────────── SETUP PAGE ─────────────────── -->
+<!-- ───────────────────────────────────────── SETUP PAGE ───────────────────────────────────────── -->
 <div id="page-setup" class="hidden" style="display:none;min-height:100vh;align-items:center;justify-content:center">
   <div class="auth-box" style="max-width:480px">
     <div class="text-center mb-6">
@@ -330,7 +330,7 @@
   </div>
 </div>
 
-<!-- ─────────────────── MAIN APP ─────────────────── -->
+<!-- ───────────────────────────────────────── MAIN APP ───────────────────────────────────────── -->
 <div id="app-shell" class="hidden">
 
   <!-- SIDEBAR -->
@@ -355,7 +355,7 @@
       <span class="nav-icon">📋</span><span>To-Dos</span>
     </a>
     <a class="nav-link" data-page="quests" onclick="showPage('quests')">
-      <span class="nav-icon">⚔️</span><span>Quests</span>
+      <span class="nav-icon">🗡️</span><span>Quests</span>
     </a>
     <a class="nav-link" data-page="sprite" onclick="showPage('sprite')">
       <span class="nav-icon">🎨</span><span>My Hero</span>
@@ -412,7 +412,7 @@
         </div>
         <div class="card text-center">
           <div class="text-2xl font-bold" style="color:var(--blue)" id="stat-quests">0</div>
-          <div class="text-xs mt-1" style="color:var(--muted)">⚔️ Quests Done</div>
+          <div class="text-xs mt-1" style="color:var(--muted)">🗡️ Quests Done</div>
         </div>
       </div>
 
@@ -428,7 +428,7 @@
       <!-- Active quests summary -->
       <div class="card">
         <div class="section-header mb-2">
-          <h3 class="font-bold text-yellow-400">⚔️ Active Quests</h3>
+          <h3 class="font-bold text-yellow-400">🗡️ Active Quests</h3>
           <a onclick="showPage('quests')" class="text-sm cursor-pointer" style="color:var(--muted)">View all →</a>
         </div>
         <div id="dash-quests"></div>
@@ -462,7 +462,7 @@
     <!-- ══ QUESTS ══ -->
     <div id="page-quests" class="page">
       <div class="section-header">
-        <h2 class="section-title">⚔️ Quests</h2>
+        <h2 class="section-title">🗡️ Quests</h2>
         <button class="btn btn-primary btn-sm" onclick="openModal('quest')">+ New Quest</button>
       </div>
       <div class="flex gap-2 mb-4">
@@ -538,7 +538,7 @@
 
       <!-- Leaderboard -->
       <div class="card">
-        <h3 class="font-bold text-yellow-400 mb-4">⚔️ Party Leaderboard</h3>
+        <h3 class="font-bold text-yellow-400 mb-4">🗡️ Party Leaderboard</h3>
         <div id="leaderboard-list"></div>
       </div>
     </div>
@@ -546,14 +546,14 @@
   </div><!-- /main-content -->
 </div><!-- /app-shell -->
 
-<!-- ─────────────────── MODALS ─────────────────── -->
+<!-- ───────────────────────────────────────── MODALS ───────────────────────────────────────── -->
 <div id="modal-backdrop" class="modal-backdrop hidden" onclick="closeModalOutside(event)">
   <div class="modal" onclick="event.stopPropagation()">
     <div id="modal-content"></div>
   </div>
 </div>
 
-<!-- ─────────────────── TOAST ─────────────────── -->
+<!-- ───────────────────────────────────────── TOAST ───────────────────────────────────────── -->
 <div id="toast-container"></div>
 
 <script>
@@ -568,7 +568,7 @@ const HAIR_COLORS  = ['#f1c40f','#27ae60','#2980b9','#e74c3c','#8e44ad','#2c3e50
 const OUTFIT_COLORS= ['#27ae60','#2980b9','#e74c3c','#8e44ad','#e67e22','#2c3e50','#16a085','#c0392b'];
 const ACCENT_COLORS= ['#f1c40f','#f39c12','#ecf0f1','#e74c3c','#3498db','#1abc9c'];
 const SPRITE_TYPES = [
-  { id:'hero',     label:'Hero',     icon:'⚔️' },
+  { id:'hero',     label:'Hero',     icon:'🗡️' },
   { id:'mage',     label:'Mage',     icon:'🔮' },
   { id:'warrior',  label:'Warrior',  icon:'🛡️' },
   { id:'archer',   label:'Archer',   icon:'🏹' },
@@ -682,7 +682,7 @@ async function loadProfile() {
   if (!state.user) return;
   const { data } = await sb.from('profiles').select('*').eq('id', state.user.id).single();
   state.profile = data;
-  state.editSprite = data?.sprite_config ? { ...data.sprite_config } : {
+  state.editSprite = data?.avatar_json ? { ...data.avatar_json } : {
     type: 'hero', skinColor: '#F5CBA7', hairColor: '#27ae60', outfitColor: '#27ae60', accentColor: '#f1c40f'
   };
 }
@@ -723,8 +723,8 @@ function showPage(page) {
 // ================================================================
 function updateNav() {
   if (!state.profile) return;
-  const { username, xp = 0, level = 1, sprite_config } = state.profile;
-  const cfg = sprite_config || state.editSprite;
+  const { username, xp = 0, level = 1, avatar_json } = state.profile;
+  const cfg = avatar_json || state.editSprite;
   document.getElementById('nav-username').textContent = username;
   document.getElementById('nav-level').textContent = `Level ${level}`;
   document.getElementById('nav-sprite').innerHTML = renderSprite(cfg, 3, true);
@@ -737,8 +737,8 @@ function updateNav() {
 // ================================================================
 async function renderDashboard() {
   if (!state.profile) return;
-  const { username, xp = 0, level = 1, sprite_config } = state.profile;
-  const cfg = sprite_config || state.editSprite || {};
+  const { username, xp = 0, level = 1, avatar_json } = state.profile;
+  const cfg = avatar_json || state.editSprite || {};
 
   document.getElementById('dash-username').textContent = username;
   document.getElementById('dash-level-badge').textContent = `⭐ LVL ${level}`;
@@ -798,12 +798,12 @@ async function renderDashboard() {
       const pct = steps.length ? Math.round((uq.current_step / steps.length) * 100) : 0;
       return `<div class="task-item flex-col" style="align-items:flex-start">
         <div class="flex w-full items-center gap-2">
-          <span>${q.type === 'group' ? '👥' : '⚔️'}</span>
+          <span>${q.type === 'group' ? '👥' : '🗡️'}</span>
           <span class="font-semibold">${q.title}</span>
           <span class="ml-auto text-xs" style="color:var(--muted)">${uq.current_step}/${steps.length} steps</span>
         </div>
         <div class="xp-bar-track w-full mt-2"><div class="xp-bar-fill" style="width:${pct}%;background:linear-gradient(90deg,#3498db,#2980b9)"></div></div>
-      </div>`;
+      </div>`
     }).join('');
   }
 }
@@ -826,8 +826,8 @@ async function renderDailies() {
   }
   el.innerHTML = state.dailies.map(d => {
     const done = d.last_completed === today;
-    return `<div class="task-item ${done ? 'completed' : ''}">
-      <div class="task-check ${done ? 'done' : ''}" onclick="${done ? '' : `completeDaily('${d.id}')`}">
+    return `<div class="task-item ${done ? 'completed' : ''}"
+      <div class="task-check ${done ? 'done' : ''}" onclick="${done ? '' : `completeDaily('${d.id}')`}"
         ${done ? '✓' : ''}
       </div>
       <div class="flex-1 min-w-0">
@@ -851,7 +851,7 @@ async function completeDaily(id) {
 
   await sb.from('dailies').update({ last_completed: today, streak: newStreak }).eq('id', id);
   await awardXp(daily.xp_reward + newStreak * 2);
-  showToast(`+${daily.xp_reward + newStreak * 2} XP! 🔥 Streak: ${newStreak}`, 'xp');
+  showToast(`+${daily.xp_reward + newStreak * 2} XP! 🔥 Streak: ${newStreak}', 'xp');
   await loadProfile();
   updateNav();
   renderDailies();
@@ -895,8 +895,8 @@ async function renderTodos() {
   }
   el.innerHTML = items.map(t => {
     const badgeClass = t.difficulty === 'easy' ? 'badge-green' : t.difficulty === 'hard' ? 'badge-red' : 'badge-gold';
-    return `<div class="task-item ${t.completed ? 'completed' : ''}">
-      <div class="task-check ${t.completed ? 'done' : ''}" onclick="${t.completed ? '' : `completeTodo('${t.id}')`}">
+    return `<div class="task-item ${t.completed ? 'completed' : ''}"
+      <div class="task-check ${t.completed ? 'done' : ''}" onclick="${t.completed ? '' : `completeTodo('${t.id}')`}"
         ${t.completed ? '✓' : ''}
       </div>
       <div class="flex-1 min-w-0">
@@ -905,8 +905,8 @@ async function renderTodos() {
       </div>
       <span class="badge ${badgeClass}">${DIFFICULTY_LABELS[t.difficulty]}</span>
       <span class="badge badge-green">+${t.xp_reward} XP</span>
-      ${!t.completed ? `<button class="btn btn-danger btn-sm" onclick="deleteTodo('${t.id}')">🗑</button>` : ''}
-    </div>`;
+      ${!t.completed ? `<button class="btn btn-danger btn-sm" onclick="deleteTodo('${t.id}')"}>🗑</button>` : ''}
+    </div>`
   }).join('');
 }
 
@@ -915,7 +915,7 @@ async function completeTodo(id) {
   if (!todo || todo.completed) return;
   await sb.from('todos').update({ completed: true, completed_at: new Date().toISOString() }).eq('id', id);
   await awardXp(todo.xp_reward);
-  showToast(`+${todo.xp_reward} XP! Task conquered! ⚔️`, 'xp');
+  showToast(`+${todo.xp_reward} XP! Task conquered! 🗡️`, 'xp');
   await loadProfile();
   updateNav();
   renderTodos();
@@ -975,14 +975,14 @@ async function renderQuests() {
     const isDone = uq?.completed;
     const pct = steps.length ? Math.round((currentStep / steps.length) * 100) : 0;
 
-    return `<div class="card ${isDone ? 'opacity-60' : ''}">
+    return `<div class="card ${isDone ? 'opacity-60' : ''}"
       <div class="flex items-start gap-3 mb-3">
-        <span style="font-size:1.5rem">${q.type === 'group' ? '👥' : '⚔️'}</span>
+        <span style="font-size:1.5rem">${q.type === 'group' ? '👥' : '🗡️'}</span>
         <div class="flex-1">
           <div class="font-bold text-lg">${q.title}</div>
           ${q.description ? `<div class="text-sm mt-1" style="color:var(--muted)">${q.description}</div>` : ''}
           <div class="flex gap-2 mt-2">
-            <span class="badge ${q.type === 'group' ? 'badge-blue' : 'badge-purple'}">${q.type === 'group' ? '👥 Group' : '⚔️ Solo'}</span>
+            <span class="badge ${q.type === 'group' ? 'badge-blue' : 'badge-purple'}">${q.type === 'group' ? '👥 Group' : '🗡️ Solo'}</span>
             <span class="badge badge-gold">🏆 ${q.xp_reward} XP</span>
             ${isDone ? '<span class="badge badge-green">✅ Complete!</span>' : ''}
           </div>
@@ -1008,7 +1008,7 @@ async function renderQuests() {
       ` : ''}
 
       <div class="flex gap-2">
-        ${!uq && !isDone ? `<button class="btn btn-primary btn-sm" onclick="startQuest('${q.id}')">⚔️ Start Quest</button>` : ''}
+        ${!uq && !isDone ? `<button class="btn btn-primary btn-sm" onclick="startQuest('${q.id}')">🗡️ Start Quest</button>` : ''}
         ${isDone ? '<span style="color:var(--green);font-size:.9rem">✅ Quest Complete!</span>' : ''}
         ${q.created_by === state.user.id ? `<button class="btn btn-danger btn-sm ml-auto" onclick="deleteQuest('${q.id}')">🗑</button>` : ''}
       </div>
@@ -1018,7 +1018,7 @@ async function renderQuests() {
 
 async function startQuest(questId) {
   await sb.from('user_quests').insert({ user_id: state.user.id, quest_id: questId, current_step: 0 });
-  showToast('Quest started! Good luck, hero! ⚔️');
+  showToast('Quest started! Good luck, hero! 🗡️');
   renderQuests();
 }
 
@@ -1105,9 +1105,9 @@ function updateSpritePreview() {
 }
 
 async function saveSprite() {
-  const { error } = await sb.from('profiles').update({ sprite_config: state.editSprite }).eq('id', state.user.id);
+  const { error } = await sb.from('profiles').update({ avatar_json: state.editSprite }).eq('id', state.user.id);
   if (error) { showToast('Failed to save. Try again.', 'error'); return; }
-  state.profile = { ...state.profile, sprite_config: state.editSprite };
+  state.profile = { ...state.profile, avatar_json: state.editSprite };
   updateNav();
   showToast('Hero saved! ✨');
 }
@@ -1133,16 +1133,16 @@ async function renderLeaderboard() {
       <button class="btn btn-danger btn-sm" onclick="leaveParty()">🚪 Leave Party</button>`;
 
     // Load leaderboard
-    const { data: members } = await sb.from('profiles').select('id,username,level,xp,sprite_config').eq('party_code', profile.party_code).order('xp', { ascending: false });
+    const { data: members } = await sb.from('profiles').select('id,username,level,xp,avatar_json').eq('party_code', profile.party_code).order('xp', { ascending: false });
     if (!members?.length) {
       lbEl.innerHTML = '<p style="color:var(--muted)">No party members yet.</p>';
       return;
     }
     lbEl.innerHTML = members.map((m, i) => {
       const rankIcon = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i + 1}`;
-      const spriteHtml = renderSprite(m.sprite_config || {}, 3);
+      const spriteHtml = renderSprite(m.avatar_json || {}, 3);
       const { progress } = getXpProgress(m.xp || 0, m.level || 1);
-      return `<div class="lb-row ${m.id === state.user.id ? 'card-gold' : ''}">
+      return `<div class="lb-row ${m.id === state.user.id ? 'card-gold' : ''}"
         <div class="lb-rank">${rankIcon}</div>
         <div style="image-rendering:pixelated">${spriteHtml}</div>
         <div class="flex-1 min-w-0">
@@ -1160,7 +1160,7 @@ async function renderLeaderboard() {
         <div class="card">
           <h4 class="font-bold text-yellow-400 mb-2">Create Party</h4>
           <input class="input mb-2" id="party-name-input" placeholder="Party name" />
-          <button class="btn btn-primary w-full" onclick="createParty()">⚔️ Create Party</button>
+          <button class="btn btn-primary w-full" onclick="createParty()">🗡️ Create Party</button>
         </div>
         <div class="card">
           <h4 class="font-bold text-yellow-400 mb-2">Join Party</h4>
@@ -1191,7 +1191,7 @@ async function joinParty() {
   if (!party) { showToast('Party not found. Check the code!', 'error'); return; }
   await sb.from('profiles').update({ party_code: code }).eq('id', state.user.id);
   await loadProfile();
-  showToast('You joined the party! ⚔️ Let the games begin!');
+  showToast('You joined the party! 🗡️ Let the games begin!');
   renderLeaderboard();
 }
 
@@ -1243,13 +1243,13 @@ function openModal(type) {
       </div>`;
   } else if (type === 'quest') {
     content.innerHTML = `
-      <h3 class="text-xl font-bold text-yellow-400 mb-4">⚔️ New Quest</h3>
+      <h3 class="text-xl font-bold text-yellow-400 mb-4">🗡️ New Quest</h3>
       <div class="mb-3"><input class="input" id="m-quest-title" placeholder="Quest title" /></div>
-      <div class="mb-3"><input class="input" id="m-quest-desc" placeholder="Quest description (optional)" /></div>
+      <div class="mb-3"><input class="input" id="m-quest-desc" plac eholder="Quest description (optional)" /></div>
       <div class="mb-3">
         <label class="text-sm mb-1 block" style="color:var(--muted)">Quest Type</label>
         <select class="input" id="m-quest-type">
-          <option value="solo">⚔️ Solo Quest</option>
+          <option value="solo">🗡️ Solo Quest</option>
           <option value="group">👥 Group Quest (party)</option>
         </select>
       </div>
@@ -1268,7 +1268,7 @@ function openModal(type) {
         </select>
       </div>
       <div class="flex gap-2">
-        <button class="btn btn-primary flex-1" onclick="addQuest()">⚔️ Create Quest</button>
+        <button class="btn btn-primary flex-1" onclick="addQuest()">🗡️ Create Quest</button>
         <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
       </div>`;
   }
@@ -1306,7 +1306,8 @@ async function addQuest() {
   const type  = document.getElementById('m-quest-type').value;
   const xp    = parseInt(document.getElementById('m-quest-xp').value);
   const stepsRaw = document.getElementById('m-quest-steps').value.trim();
-  const steps = stepsRaw ? stepsRaw.split('\n').map(s => s.trim()).filter(Boolean) : [];
+  const steps = stepsRaw ? stepsRaw.split('\
+').map(s => s.trim()).filter(Boolean) : [];
 
   let partyId = null;
   if (type === 'group' && state.profile?.party_code) {
@@ -1315,7 +1316,7 @@ async function addQuest() {
   }
 
   await sb.from('quests').insert({ title, description: desc || null, type, steps, xp_reward: xp, party_id: partyId, created_by: state.user.id });
-  closeModal(); showToast('Quest created! Your legend begins ⚔️');
+  closeModal(); showToast('Quest created! Your legend begins 🗡️');
   renderQuests();
 }
 
@@ -1344,7 +1345,7 @@ function showLevelUp(level) {
 
 // ================================================================
 // TOAST
-// =================================================================
+// ================================================================
 function showToast(msg, type = 'success') {
   const container = document.getElementById('toast-container');
   const el = document.createElement('div');
