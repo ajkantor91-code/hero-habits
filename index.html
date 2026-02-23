@@ -476,53 +476,9 @@
     <!-- ══ SPRITE EDITOR ══ -->
     <div id="page-sprite" class="page">
       <div class="section-header">
-        <h2 class="section-title">🎨 My Hero</h2>
-        <button class="btn btn-gold btn-sm" onclick="saveSprite()">💾 Save Hero</button>
+        <h2 class="section-title">⚔️ Choose Your Hero</h2>
       </div>
-
-      <div class="grid gap-4" style="grid-template-columns: auto 1fr">
-
-        <!-- Preview -->
-        <div class="card text-center" style="min-width:180px">
-          <h3 class="font-bold mb-4" style="color:var(--muted)">Preview</h3>
-          <div id="sprite-preview" class="mx-auto" style="display:inline-block"></div>
-          <div id="sprite-type-name" class="mt-3 font-bold text-yellow-400 text-sm"></div>
-          <div class="text-xs mt-1" style="color:var(--muted)">Your avatar</div>
-        </div>
-
-        <!-- Controls -->
-        <div>
-          <!-- Character type -->
-          <div class="card mb-3">
-            <h3 class="font-bold mb-3 text-yellow-400">Character Class</h3>
-            <div class="flex flex-wrap gap-2" id="type-buttons"></div>
-          </div>
-
-          <!-- Skin tone -->
-          <div class="card mb-3">
-            <h3 class="font-bold mb-3 text-yellow-400">Skin Tone</h3>
-            <div class="flex flex-wrap gap-2" id="skin-swatches"></div>
-          </div>
-
-          <!-- Hair color -->
-          <div class="card mb-3">
-            <h3 class="font-bold mb-3 text-yellow-400">Hair / Hat Color</h3>
-            <div class="flex flex-wrap gap-2" id="hair-swatches"></div>
-          </div>
-
-          <!-- Outfit color -->
-          <div class="card mb-3">
-            <h3 class="font-bold mb-3 text-yellow-400">Outfit Color</h3>
-            <div class="flex flex-wrap gap-2" id="outfit-swatches"></div>
-          </div>
-
-          <!-- Accent color -->
-          <div class="card">
-            <h3 class="font-bold mb-3 text-yellow-400">Accent / Weapon Color</h3>
-            <div class="flex flex-wrap gap-2" id="accent-swatches"></div>
-          </div>
-        </div>
-      </div>
+      <div id="sprite-picker-grid" class="grid gap-3" style="grid-template-columns:repeat(auto-fill,minmax(130px,1fr))"></div>
     </div>
 
     <!-- ══ PARTY / LEADERBOARD ══ -->
@@ -731,7 +687,7 @@ function showPage(page) {
   if (page === 'dailies')      renderDailies();
   if (page === 'todos')        renderTodos();
   if (page === 'quests')       renderQuests();
-  if (page === 'sprite')       renderSpriteEditor();
+  if (page === 'sprite')       renderSpritePicker();
   if (page === 'leaderboard')  renderLeaderboard();
 }
 
@@ -741,10 +697,10 @@ function showPage(page) {
 function updateNav() {
   if (!state.profile) return;
   const { username, xp = 0, level = 1, avatar_json } = state.profile;
-  const cfg = avatar_json || state.editSprite;
+  const spriteKey = (avatar_json && avatar_json.sprite) || 'link';
   document.getElementById('nav-username').textContent = username;
   document.getElementById('nav-level').textContent = `Level ${level}`;
-  document.getElementById('nav-sprite').innerHTML = renderSprite(cfg, 3, true);
+  renderSprite(document.getElementById('nav-sprite'), spriteKey, 36);
   const { progress } = getXpProgress(xp, level);
   document.getElementById('nav-xp-bar').style.width = progress + '%';
 }
@@ -755,11 +711,11 @@ function updateNav() {
 async function renderDashboard() {
   if (!state.profile) return;
   const { username, xp = 0, level = 1, avatar_json } = state.profile;
-  const cfg = avatar_json || state.editSprite || {};
+  const spriteKey = (avatar_json && avatar_json.sprite) || 'link';
 
   document.getElementById('dash-username').textContent = username;
   document.getElementById('dash-level-badge').textContent = `⭐ LVL ${level}`;
-  document.getElementById('dash-sprite').innerHTML = renderSprite(cfg, 5, true);
+  renderSprite(document.getElementById('dash-sprite'), spriteKey, 60);
 
   const { current, next, progress } = getXpProgress(xp, level);
   document.getElementById('dash-xp-text').textContent = `${xp} XP total`;
@@ -1130,17 +1086,20 @@ function renderSwatches(containerId, colors, key) {
   ).join('');
 }
 
-function renderSpriteEditor() {
-  const cfg = state.editSprite || {};
-  updateSpritePreview();
-  // Highlight selected type
-  SPRITE_TYPES.forEach(t => document.getElementById(`type-${t.id}`)?.classList.toggle('selected', t.id === cfg.type));
-  // Highlight selected colors
-  ['skinColor','hairColor','outfitColor','accentColor'].forEach(key => {
-    const val = cfg[key];
-    document.querySelectorAll(`[id^="swatch-${key}-"]`).forEach(sw => sw.classList.remove('selected'));
-    if (val) document.getElementById(`swatch-${key}-${val.replace('#','')}`)?.classList.add('selected');
-  });
+function renderSpritePicker() {
+  const currentSprite = (state.profile && state.profile.avatar_json && state.profile.avatar_json.sprite) || 'link';
+  const grid = document.getElementById('sprite-picker-grid');
+  if (!grid) return;
+  grid.innerHTML = Object.entries(PRESET_SPRITES).map(function(entry) {
+    const key = entry[0], sprite = entry[1];
+    const selected = key === currentSprite;
+    return '<div class="card text-center" style="padding:12px;border:2px solid ' + (selected ? 'var(--gold)' : 'var(--border)') + ';cursor:pointer" onclick="selectSprite(\'' + key + '\')">'  
+      + '<img src="' + sprite.img + '" style="width:80px;height:80px;object-fit:contain;margin:0 auto 8px;display:block;image-rendering:pixelated;" alt="' + sprite.name + '">'
+      + '<div style="font-size:.85rem;font-weight:bold">' + sprite.name + '</div>'
+      + '<div style="font-size:.7rem;color:var(--muted)">' + sprite.title + '</div>'
+      + (selected ? '<div style="color:var(--gold);font-size:.75rem;margin-top:4px">✓ Selected</div>' : '')
+      + '</div>';
+  }).join('');
 }
 
 function setSpriteType(type) {
@@ -1160,16 +1119,16 @@ function updateSpritePreview() {
   const cfg = state.editSprite || {};
   const previewEl = document.getElementById('sprite-preview');
   const nameEl    = document.getElementById('sprite-type-name');
-  if (previewEl) previewEl.innerHTML = renderSprite(cfg, 8, true);
-  if (nameEl) nameEl.textContent = SPRITE_TYPES.find(t => t.id === cfg.type)?.label || 'Hero';
+  // sprite preview removed - now using preset sprites
 }
 
-async function saveSprite() {
-  const { error } = await sb.from('profiles').update({ avatar_json: state.editSprite }).eq('id', state.user.id);
+async function selectSprite(key) {
+  const { error } = await sb.from('profiles').update({ avatar_json: { sprite: key } }).eq('id', state.user.id);
   if (error) { showToast('Failed to save. Try again.', 'error'); return; }
-  state.profile = { ...state.profile, avatar_json: state.editSprite };
+  state.profile = { ...state.profile, avatar_json: { sprite: key } };
   updateNav();
-  showToast('Hero saved! ✨');
+  renderSpritePicker();
+  showToast('Hero selected! ⚔️', 'xp');
 }
 
 // ================================================================
@@ -1200,7 +1159,9 @@ async function renderLeaderboard() {
     }
     lbEl.innerHTML = members.map((m, i) => {
       const rankIcon = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i + 1}`;
-      const spriteHtml = renderSprite(m.avatar_json || {}, 3);
+      const _sk = (m.avatar_json && m.avatar_json.sprite) || 'link';
+      const _sp = PRESET_SPRITES[_sk] || PRESET_SPRITES.link;
+      const spriteHtml = '<img src="' + _sp.img + '" style="width:36px;height:36px;object-fit:contain;image-rendering:pixelated" alt="' + _sp.name + '">';
       const { progress } = getXpProgress(m.xp || 0, m.level || 1);
       return `<div class="lb-row ${m.id === state.user.id ? 'card-gold' : ''}"
         <div class="lb-rank">${rankIcon}</div>
