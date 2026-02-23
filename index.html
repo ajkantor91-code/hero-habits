@@ -605,15 +605,17 @@ if (typeof navigator !== 'undefined' && navigator.locks) {
 sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   initSpriteEditor();
 
-  sb.auth.onAuthStateChange(async (event, session) => {
+  sb.auth.onAuthStateChange((event, session) => {
     if (session) {
       state.user = session.user;
-      await loadProfile();
-      if (!state.profile || !state.profile.username) {
-        showAuthPage('setup');
-      } else {
-        showApp();
-      }
+      setTimeout(async () => {
+        await loadProfile();
+        if (!state.profile || !state.profile.username) {
+          showAuthPage('setup');
+        } else {
+          showApp();
+        }
+      }, 0);
     } else {
       state.user = null; state.profile = null;
       showAuthPage('signin');
