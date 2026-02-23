@@ -868,9 +868,9 @@ async function renderDailies() {
   }
   el.innerHTML = state.dailies.map(d => {
     const done = d.last_completed === selectedDate;
-    const canComplete = !done && (!d.last_completed || d.last_completed < selectedDate);
+      const canComplete = !done;
     return `<div class="task-item ${done ? 'completed' : ''}">
-      <div class="task-check ${done ? 'done' : ''}" onclick="${canComplete ? `completeDaily('${d.id}', '${selectedDate}')` : ''}">${done ? '✓' : ''}</div>
+      <div class="task-check ${done ? 'done' : ''}" onclick="${done ? `uncompleteDaily('${d.id}', '${selectedDate}')` : canComplete ? `completeDaily('${d.id}', '${selectedDate}')` : ''}" title="${done ? 'Click to uncheck' : ''}">${done ? '✓' : ''}</div>
       <div class="flex-1 min-w-0">
         <p class="font-medium truncate">${d.title}</p>
         ${d.description ? `<p class="text-xs mt-0.5 truncate" style="color:var(--muted)">${d.description}</p>` : ''}
@@ -887,19 +887,34 @@ async function completeDaily(id, dateStr) {
   const today = new Date().toISOString().slice(0, 10);
   const targetDate = dateStr || state.selectedDailyDate || today;
   const daily = state.dailies.find(d => d.id === id);
-  // Don't allow if already completed on or after the target date
-  if (!daily || (daily.last_completed && daily.last_completed >= targetDate)) return;
-
-  // Compute streak: check if completed the day before targetDate
+  if (!daily || daily.last_completed === targetDate) return;
+  const isBackfill = daily.last_completed && daily.last_completed > targetDate;
   const prevDay = new Date(new Date(targetDate + 'T12:00:00').getTime() - 86400000).toISOString().slice(0, 10);
-  const newStreak = daily.last_completed === prevDay ? (daily.streak || 0) + 1 : 1;
-
-  await sb.from('dailies').update({ last_completed: targetDate, streak: newStreak }).eq('id', id);
-  await awardXp(daily.xp_reward + newStreak * 2);
-  showToast(`+${daily.xp_reward + newStreak * 2} XP! 🔥 Streak: ${newStreak}`, 'xp');
+  const newStreak = (!isBackfill && daily.last_completed === prevDay) ? (daily.streak || 0) + 1 : (daily.streak || 1);
+  const xpAwarded = daily.xp_reward + newStreak * 2;
+  if (!isBackfill) {
+    await sb.from('dailies').update({ last_completed: targetDate, streak: newStreak }).eq('id', id);
+  }
+  await awardXp(xpAwarded);
+  showToast(`+${xpAwarded} XP! 🔥 Streak: ${newStreak}`, 'xp');
   await loadProfile();
   updateNav();
   renderDailies();
+  if (document.getElementById('page-dashboard')?.classList.contains('active')) renderDashboard();
+}
+async function uncompleteDaily(id, dateStr) {
+  const today = new Date().toISOString().slice(0, 10);
+  const targetDate = dateStr || state.selectedDailyDate || today;
+  const daily = state.dailies.find(d => d.id === id);
+  if (!daily || daily.last_completed !== targetDate) return;
+  const xpToDeduct = daily.xp_reward + (daily.streak || 1) * 2;
+  await sb.from('dailies').update({ last_completed: null, streak: 0 }).eq('id', id);
+  await awardXp(-xpToDeduct);
+  showToast(`-${xpToDeduct} XP removed`, 'error');
+  await loadProfile();
+  updateNav();
+  renderDailies();
+  if (document.getElementById('page-dashboard')?.classList.contains('active')) renderDashboard();
 }
 
 async function deleteDaily(id) {
