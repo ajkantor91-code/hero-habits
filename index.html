@@ -589,12 +589,18 @@ let sb, state = {
 // INIT
 // ================================================================
 document.addEventListener('DOMContentLoaded', () => {
-  // Fix navigator.locks to prevent auth lock timeout in some browsers
+  // Fix navigator.locks: it's a getter-only on Navigator.prototype, so use defineProperty
 if (typeof navigator !== 'undefined' && navigator.locks) {
-  navigator.locks = {
-    request: (name, opts, cb) => Promise.resolve((typeof opts === 'function' ? opts : cb)({ name, mode: 'exclusive' })),
-    query: () => Promise.resolve({ held: [], pending: [] })
-  };
+  try {
+    Object.defineProperty(navigator, 'locks', {
+      value: {
+        request: (name, opts, cb) => Promise.resolve((typeof opts === 'function' ? opts : cb)({ name, mode: 'exclusive' })),
+        query: () => Promise.resolve({ held: [], pending: [] })
+      },
+      configurable: true,
+      writable: true
+    });
+  } catch(e) { /* ignore if browser prevents override */ }
 }
 sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   initSpriteEditor();
