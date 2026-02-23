@@ -589,9 +589,14 @@ let sb, state = {
 // INIT
 // ================================================================
 document.addEventListener('DOMContentLoaded', () => {
-  sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
-    auth: { lock: (name, acquireTimeout, fn) => fn() }
-  });
+  // Fix navigator.locks to prevent auth lock timeout in some browsers
+if (typeof navigator !== 'undefined' && navigator.locks) {
+  navigator.locks = {
+    request: (name, opts, cb) => Promise.resolve((typeof opts === 'function' ? opts : cb)({ name, mode: 'exclusive' })),
+    query: () => Promise.resolve({ held: [], pending: [] })
+  };
+}
+sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   initSpriteEditor();
 
   sb.auth.onAuthStateChange(async (event, session) => {
