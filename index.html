@@ -808,8 +808,14 @@ async function completeDaily(id) {
   const daily = state.dailies.find(d => d.id === id);
   if (!daily || daily.last_completed === today) return;
 
+  // Optimistically mark as done in local state immediately — prevents awarding
+  // XP multiple times if the user clicks again before the async DB call returns.
+  const prevLastCompleted = daily.last_completed;
+  daily.last_completed = today;
+
   const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
-  const newStreak = daily.last_completed === yesterday ? (daily.streak || 0) + 1 : 1;
+  const newStreak = prevLastCompleted === yesterday ? (daily.streak || 0) + 1 : 1;
+  daily.streak = newStreak;
 
   await sb.from('dailies').update({ last_completed: today, streak: newStreak }).eq('id', id);
   await awardXp(daily.xp_reward + newStreak * 2);
@@ -817,6 +823,10 @@ async function completeDaily(id) {
   await loadProfile();
   updateNav();
   renderDailies();
+  // Refresh dashboard if it's currently visible (it has its own daily shortcut buttons)
+  if (document.getElementById('page-dashboard')?.classList.contains('active')) {
+    renderDashboard();
+  }
 }
 
 async function deleteDaily(id) {
