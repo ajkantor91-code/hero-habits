@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>QuestLog 🗡️</title>
+  <title>QuestLog ⚔️</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="sprites.js"></script>
@@ -33,13 +33,13 @@
       overflow-x: hidden;
     }
 
-    /* ──── PIXEL FONT for headers ──── */
+    /* ── PIXEL FONT for headers ── */
     h1, h2, .pixel-text {
       font-family: 'Courier New', monospace;
       letter-spacing: 1px;
     }
 
-    /* ──── STARS background ──── */
+    /* ── STARS background ── */
     body::before {
       content: '';
       position: fixed;
@@ -56,7 +56,7 @@
       z-index: 0;
     }
 
-    /* ──── LAYOUT ──── */
+    /* ── LAYOUT ── */
     #app-shell { position: relative; z-index: 1; display: flex; min-height: 100vh; }
 
     #sidebar {
@@ -82,7 +82,7 @@
       #app-shell { flex-direction: column; }
     }
 
-    /* ──── NAV LINKS ──── */
+    /* ── NAV LINKS ── */
     .nav-link {
       display: flex; align-items: center; gap: 0.6rem;
       padding: 0.6rem 0.8rem; border-radius: 8px;
@@ -96,7 +96,7 @@
     .nav-link.active { background: var(--card); color: var(--gold); border-color: var(--gold); }
     .nav-icon { font-size: 1.1rem; width: 24px; text-align: center; }
 
-    /* ──── CARDS ──── */
+    /* ── CARDS ── */
     .card {
       background: var(--card);
       border: 1px solid var(--border);
@@ -107,7 +107,7 @@
     .card-gold { border-color: var(--gold); }
     .card-green { border-color: var(--green); }
 
-    /* ──── BUTTONS ──── */
+    /* ── BUTTONS ── */
     .btn {
       padding: 0.5rem 1.1rem; border-radius: 8px; font-weight: 600;
       cursor: pointer; border: 1px solid transparent;
@@ -125,7 +125,7 @@
     .btn-sm { padding: 0.3rem 0.7rem; font-size: 0.8rem; }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* ──── INPUTS ──── */
+    /* ── INPUTS ── */
     .input {
       background: var(--surface); border: 1px solid var(--border);
       color: var(--text); border-radius: 8px; padding: 0.55rem 0.9rem;
@@ -135,7 +135,7 @@
     .input::placeholder { color: var(--muted); }
     select.input option { background: var(--surface); }
 
-    /* ──── XP BAR ──── */
+    /* ── XP BAR ── */
     .xp-bar-track {
       background: var(--surface); border: 1px solid var(--border);
       border-radius: 999px; height: 14px; overflow: hidden;
@@ -146,7 +146,7 @@
       transition: width 0.5s ease;
     }
 
-    /* ──── TASK ITEMS ──── */
+    /* ── TASK ITEMS ── */
     .task-item {
       display: flex; align-items: center; gap: 0.75rem;
       padding: 0.8rem 1rem; background: var(--surface);
@@ -164,7 +164,7 @@
     .task-check:hover { border-color: var(--green); }
     .task-check.done { background: var(--green); border-color: var(--green); color: #fff; }
 
-    /* ──── BADGES ──── */
+    /* ── BADGES ── */
     .badge {
       font-size: 0.72rem; font-weight: 700; padding: 2px 8px;
       border-radius: 999px; display: inline-block;
@@ -175,10 +175,10 @@
     .badge-blue { background: #3498db22; color: var(--blue); border: 1px solid var(--blue); }
     .badge-purple { background: #8e44ad22; color: var(--purple); border: 1px solid var(--purple); }
 
-    /* ──── SPRITE PREVIEW ──── */
+    /* ── SPRITE PREVIEW ── */
     .sprite-preview { image-rendering: pixelated; }
 
-    /* ──── TOAST ──── */
+    /* ── TOAST ── */
     #toast-container {
       position: fixed; bottom: 2rem; right: 2rem; z-index: 999;
       display: flex; flex-direction: column; gap: 0.5rem;
@@ -192,7 +192,7 @@
     .toast.xp { border-color: var(--gold); color: var(--gold); }
     @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: none; opacity: 1; } }
 
-    /* ──── MODAL ──── */
+    /* ── MODAL ── */
     .modal-backdrop {
       position: fixed; inset: 0; background: #0008; z-index: 100;
       display: flex; align-items: center; justify-content: center; padding: 1rem;
@@ -204,7 +204,7 @@
     }
     @keyframes modalIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-    /* ──── LEADERBOARD ──── */
+    /* ── LEADERBOARD ── */
     .lb-row {
       display: flex; align-items: center; gap: 1rem;
       padding: 0.85rem 1rem; border-radius: 10px;
@@ -213,7 +213,7 @@
     }
     .lb-rank { font-size: 1.2rem; font-weight: 700; width: 36px; text-align: center; }
 
-    /* ──── QUEST PROGRESS ──── */
+    /* ── QUEST PROGRESS ── */
     .step-item {
       display: flex; align-items: center; gap: 0.75rem;
       padding: 0.6rem; border-radius: 8px;
@@ -227,7 +227,8 @@
     }
     .step-dot.done { background: var(--green); border-color: var(--green); }
 
-    /* ──── SPRITE EDITOR ──── */
+    /* ── SPRITE EDITOR ── */
+    /* legacy — kept for safe removal */
     .color-swatch {
       width: 36px; height: 36px; border-radius: 8px; cursor: pointer;
       border: 3px solid transparent; transition: all 0.15s;
@@ -240,11 +241,11 @@
     }
     .sprite-type-btn.selected { border-color: var(--gold); color: var(--gold); }
 
-    /* ──── PAGES ──── */
+    /* ── PAGES ── */
     .page { display: none; }
     .page.active { display: block; }
 
-    /* ──── AUTH PAGE ──── */
+    /* ── AUTH PAGE ── */
     #page-auth {
       display: flex; min-height: 100vh;
       align-items: center; justify-content: center;
@@ -254,11 +255,11 @@
       border-radius: 16px; padding: 2.5rem; width: 100%; max-width: 420px;
     }
 
-    /* ──── STREAK BADGE ──── */
+    /* ── STREAK BADGE ── */
     .streak-flame { animation: flicker 1s ease-in-out infinite alternate; }
     @keyframes flicker { from { opacity: 0.8; } to { opacity: 1; } }
 
-    /* ──── SECTION HEADERS ──── */
+    /* ── SECTION HEADERS ── */
     .section-header {
       display: flex; justify-content: space-between; align-items: center;
       margin-bottom: 1.25rem;
@@ -268,7 +269,7 @@
       font-family: 'Courier New', monospace;
     }
 
-    /* ──── LEVEL UP ANIMATION ──── */
+    /* ── LEVEL UP ANIMATION ── */
     @keyframes levelUp { 0%{transform:scale(1)} 50%{transform:scale(1.05)} 100%{transform:scale(1)} }
     .level-up { animation: levelUp 0.6s ease 2; }
 
@@ -284,11 +285,11 @@
 
 <body>
 
-<!-- ───────────────────────────────────────── AUTH PAGE ───────────────────────────────────────── -->
+<!-- ─────────────────── AUTH PAGE ─────────────────── -->
 <div id="page-auth">
   <div class="auth-box">
     <div class="text-center mb-6">
-      <div style="font-size:3rem">🗡️</div>
+      <div style="font-size:3rem">⚔️</div>
       <h1 class="text-2xl font-bold text-yellow-400 mt-2">QuestLog</h1>
       <p class="text-sm mt-1" style="color:var(--muted)">Your personal RPG life tracker</p>
     </div>
@@ -302,7 +303,7 @@
     <div id="auth-form-signin">
       <div class="mb-3"><input class="input" id="si-email" type="email" placeholder="Email" /></div>
       <div class="mb-4"><input class="input" id="si-pass" type="password" placeholder="Password" /></div>
-      <button class="btn btn-primary w-full" onclick="signIn()">🗡️ Enter the Realm</button>
+      <button class="btn btn-primary w-full" onclick="signIn()">⚔️ Enter the Realm</button>
     </div>
 
     <div id="auth-form-signup" class="hidden">
@@ -316,7 +317,7 @@
   </div>
 </div>
 
-<!-- ───────────────────────────────────────── SETUP PAGE ───────────────────────────────────────── -->
+<!-- ─────────────────── SETUP PAGE ─────────────────── -->
 <div id="page-setup" class="hidden" style="display:none;min-height:100vh;align-items:center;justify-content:center">
   <div class="auth-box" style="max-width:480px">
     <div class="text-center mb-6">
@@ -330,7 +331,7 @@
   </div>
 </div>
 
-<!-- ───────────────────────────────────────── MAIN APP ───────────────────────────────────────── -->
+<!-- ─────────────────── MAIN APP ─────────────────── -->
 <div id="app-shell" class="hidden">
 
   <!-- SIDEBAR -->
@@ -355,7 +356,7 @@
       <span class="nav-icon">📋</span><span>To-Dos</span>
     </a>
     <a class="nav-link" data-page="quests" onclick="showPage('quests')">
-      <span class="nav-icon">🗡️</span><span>Quests</span>
+      <span class="nav-icon">⚔️</span><span>Quests</span>
     </a>
     <a class="nav-link" data-page="sprite" onclick="showPage('sprite')">
       <span class="nav-icon">🎨</span><span>My Hero</span>
@@ -412,7 +413,7 @@
         </div>
         <div class="card text-center">
           <div class="text-2xl font-bold" style="color:var(--blue)" id="stat-quests">0</div>
-          <div class="text-xs mt-1" style="color:var(--muted)">🗡️ Quests Done</div>
+          <div class="text-xs mt-1" style="color:var(--muted)">⚔️ Quests Done</div>
         </div>
       </div>
 
@@ -428,7 +429,7 @@
       <!-- Active quests summary -->
       <div class="card">
         <div class="section-header mb-2">
-          <h3 class="font-bold text-yellow-400">🗡️ Active Quests</h3>
+          <h3 class="font-bold text-yellow-400">⚔️ Active Quests</h3>
           <a onclick="showPage('quests')" class="text-sm cursor-pointer" style="color:var(--muted)">View all →</a>
         </div>
         <div id="dash-quests"></div>
@@ -441,8 +442,7 @@
         <h2 class="section-title">📅 Dailies</h2>
         <button class="btn btn-primary btn-sm" onclick="openModal('daily')">+ Add Daily</button>
       </div>
-      <p class="text-sm mb-3" style="color:var(--muted)">Complete them every day to build streaks and earn XP!</p>
-      <div id="dailies-date-picker" class="flex gap-2 mb-4 overflow-x-auto pb-1"></div>
+      <p class="text-sm mb-4" style="color:var(--muted)">Complete them every day to build streaks and earn XP!</p>
       <div id="dailies-list"></div>
     </div>
 
@@ -463,7 +463,7 @@
     <!-- ══ QUESTS ══ -->
     <div id="page-quests" class="page">
       <div class="section-header">
-        <h2 class="section-title">🗡️ Quests</h2>
+        <h2 class="section-title">⚔️ Quests</h2>
         <button class="btn btn-primary btn-sm" onclick="openModal('quest')">+ New Quest</button>
       </div>
       <div class="flex gap-2 mb-4">
@@ -476,9 +476,26 @@
     <!-- ══ SPRITE EDITOR ══ -->
     <div id="page-sprite" class="page">
       <div class="section-header">
-        <h2 class="section-title">⚔️ Choose Your Hero</h2>
+        <h2 class="section-title">🎨 My Hero</h2>
+        <button class="btn btn-gold btn-sm" onclick="saveSprite()">💾 Save Hero</button>
       </div>
-      <div id="sprite-picker-grid" class="grid gap-3" style="grid-template-columns:repeat(auto-fill,minmax(130px,1fr))"></div>
+
+      <div class="grid gap-4" style="grid-template-columns: auto 1fr">
+
+        <!-- Preview -->
+        <div class="card text-center" style="min-width:180px">
+          <h3 class="font-bold mb-4" style="color:var(--muted)">Your Hero</h3>
+          <div id="sprite-preview" class="mx-auto" style="display:inline-block"></div>
+          <div id="sprite-type-name" class="mt-3 font-bold text-yellow-400 text-sm"></div>
+          <div id="sprite-type-title" class="text-xs mt-1" style="color:var(--muted)"></div>
+        </div>
+
+        <!-- Sprite picker grid -->
+        <div class="card">
+          <h3 class="font-bold mb-4 text-yellow-400">Choose Your Character</h3>
+          <div id="sprite-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:12px"></div>
+        </div>
+      </div>
     </div>
 
     <!-- ══ PARTY / LEADERBOARD ══ -->
@@ -495,7 +512,7 @@
 
       <!-- Leaderboard -->
       <div class="card">
-        <h3 class="font-bold text-yellow-400 mb-4">🗡️ Party Leaderboard</h3>
+        <h3 class="font-bold text-yellow-400 mb-4">⚔️ Party Leaderboard</h3>
         <div id="leaderboard-list"></div>
       </div>
     </div>
@@ -503,14 +520,14 @@
   </div><!-- /main-content -->
 </div><!-- /app-shell -->
 
-<!-- ───────────────────────────────────────── MODALS ───────────────────────────────────────── -->
+<!-- ─────────────────── MODALS ─────────────────── -->
 <div id="modal-backdrop" class="modal-backdrop hidden" onclick="closeModalOutside(event)">
   <div class="modal" onclick="event.stopPropagation()">
     <div id="modal-content"></div>
   </div>
 </div>
 
-<!-- ───────────────────────────────────────── TOAST ───────────────────────────────────────── -->
+<!-- ─────────────────── TOAST ─────────────────── -->
 <div id="toast-container"></div>
 
 <script>
@@ -520,17 +537,8 @@
 const SUPABASE_URL  = 'https://ojxgactkikbjdfneeaps.supabase.co';
 const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qeGdhY3RraWtiamRmbmVlYXBzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MDgxMDYsImV4cCI6MjA4Njk4NDEwNn0.rocUpqgPFmSuqTOVvRamZGqta15J0Md-eBn4lPtT2Bo';
 
-const SKIN_COLORS  = ['#FDDBB4','#F5CBA7','#E59866','#CA9B6A','#8D5524','#4A2C0A'];
-const HAIR_COLORS  = ['#f1c40f','#27ae60','#2980b9','#e74c3c','#8e44ad','#2c3e50','#ecf0f1','#e67e22'];
-const OUTFIT_COLORS= ['#27ae60','#2980b9','#e74c3c','#8e44ad','#e67e22','#2c3e50','#16a085','#c0392b'];
-const ACCENT_COLORS= ['#f1c40f','#f39c12','#ecf0f1','#e74c3c','#3498db','#1abc9c'];
-const SPRITE_TYPES = [
-  { id:'hero',     label:'Hero',     icon:'🗡️' },
-  { id:'mage',     label:'Mage',     icon:'🔮' },
-  { id:'warrior',  label:'Warrior',  icon:'🛡️' },
-  { id:'archer',   label:'Archer',   icon:'🏹' },
-  { id:'princess', label:'Royal',    icon:'👑' },
-];
+// Sprite keys from sprites.js PRESET_SPRITES
+const SPRITE_KEYS = Object.keys(PRESET_SPRITES);
 
 // ================================================================
 // STATE
@@ -539,40 +547,24 @@ let sb, state = {
   user: null, profile: null,
   dailies: [], todos: [], quests: [], userQuests: [],
   todoFilter: 'active', questFilter: 'active',
-  editSprite: null, selectedDailyDate: null,
+  editSprite: null,
 };
 
 // ================================================================
 // INIT
 // ================================================================
 document.addEventListener('DOMContentLoaded', () => {
-  // Fix navigator.locks: it's a getter-only on Navigator.prototype, so use defineProperty
-if (typeof navigator !== 'undefined' && navigator.locks) {
-  try {
-    Object.defineProperty(navigator, 'locks', {
-      value: {
-        request: (name, opts, cb) => Promise.resolve((typeof opts === 'function' ? opts : cb)({ name, mode: 'exclusive' })),
-        query: () => Promise.resolve({ held: [], pending: [] })
-      },
-      configurable: true,
-      writable: true
-    });
-  } catch(e) { /* ignore if browser prevents override */ }
-}
-sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  initSpriteEditor();
+  sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  sb.auth.onAuthStateChange((event, session) => {
+  sb.auth.onAuthStateChange(async (event, session) => {
     if (session) {
       state.user = session.user;
-      setTimeout(async () => {
-        await loadProfile();
-        if (!state.profile || !state.profile.username) {
-          showAuthPage('setup');
-        } else {
-          showApp();
-        }
-      }, 0);
+      await loadProfile();
+      if (!state.profile || !state.profile.username) {
+        showAuthPage('setup');
+      } else {
+        showApp();
+      }
     } else {
       state.user = null; state.profile = null;
       showAuthPage('signin');
@@ -616,10 +608,9 @@ async function signUp() {
   if (!username || !email || !pass) return showAuthError('Please fill in all fields.');
   if (!/^[a-zA-Z0-9_]{2,20}$/.test(username)) return showAuthError('Username: 2-20 chars, letters/numbers/_ only.');
   if (pass.length < 8) return showAuthError('Password must be at least 8 characters.');
-  const { data, error } = await sb.auth.signUp({ email, password: pass, options: { data: { username } } });
+  const { error } = await sb.auth.signUp({ email, password: pass, options: { data: { username } } });
   if (error) showAuthError(error.message);
-  else if (data?.user?.identities?.length === 0) showAuthError('This email is already registered. Please sign in, or check your inbox for the original confirmation email.');
-  else showAuthError('Check your email to confirm your account, then sign in!');
+  else showAuthError('Check your email to confirm, then sign in!');
 }
 
 async function saveUsername() {
@@ -655,9 +646,7 @@ async function loadProfile() {
   if (!state.user) return;
   const { data } = await sb.from('profiles').select('*').eq('id', state.user.id).single();
   state.profile = data;
-  state.editSprite = data?.avatar_json ? { ...data.avatar_json } : {
-    type: 'hero', skinColor: '#F5CBA7', hairColor: '#27ae60', outfitColor: '#27ae60', accentColor: '#f1c40f'
-  };
+  state.editSprite = data?.avatar_json ? { ...data.avatar_json } : { preset: 'link' };
 }
 
 // ================================================================
@@ -687,7 +676,7 @@ function showPage(page) {
   if (page === 'dailies')      renderDailies();
   if (page === 'todos')        renderTodos();
   if (page === 'quests')       renderQuests();
-  if (page === 'sprite')       renderSpritePicker();
+  if (page === 'sprite')       renderSpriteEditor();
   if (page === 'leaderboard')  renderLeaderboard();
 }
 
@@ -697,10 +686,10 @@ function showPage(page) {
 function updateNav() {
   if (!state.profile) return;
   const { username, xp = 0, level = 1, avatar_json } = state.profile;
-  const spriteKey = (avatar_json && avatar_json.sprite) || 'link';
+  const cfg = avatar_json || state.editSprite;
   document.getElementById('nav-username').textContent = username;
   document.getElementById('nav-level').textContent = `Level ${level}`;
-  renderSprite(document.getElementById('nav-sprite'), spriteKey, 36);
+  document.getElementById('nav-sprite').innerHTML = renderSpriteImg(cfg, 64);
   const { progress } = getXpProgress(xp, level);
   document.getElementById('nav-xp-bar').style.width = progress + '%';
 }
@@ -711,11 +700,11 @@ function updateNav() {
 async function renderDashboard() {
   if (!state.profile) return;
   const { username, xp = 0, level = 1, avatar_json } = state.profile;
-  const spriteKey = (avatar_json && avatar_json.sprite) || 'link';
+  const cfg = avatar_json || state.editSprite || {};
 
   document.getElementById('dash-username').textContent = username;
   document.getElementById('dash-level-badge').textContent = `⭐ LVL ${level}`;
-  renderSprite(document.getElementById('dash-sprite'), spriteKey, 60);
+  document.getElementById('dash-sprite').innerHTML = renderSpriteImg(cfg, 96);
 
   const { current, next, progress } = getXpProgress(xp, level);
   document.getElementById('dash-xp-text').textContent = `${xp} XP total`;
@@ -744,21 +733,18 @@ async function renderDashboard() {
   document.getElementById('stat-quests').textContent = doneQuests;
 
   // Today's dailies preview
+  const todayDailies = state.dailies.filter(d => d.last_completed !== today);
   const ddEl = document.getElementById('dash-dailies');
   if (!state.dailies.length) {
     ddEl.innerHTML = '<p style="color:var(--muted);font-size:.9rem">No dailies yet. <a onclick="showPage(\'dailies\')" class="cursor-pointer" style="color:var(--gold)">Add some →</a></p>';
+  } else if (!todayDailies.length) {
+    ddEl.innerHTML = '<p style="color:var(--green);font-size:.9rem">🎉 All dailies completed today!</p>';
   } else {
-    const preview = state.dailies.slice(0, 5);
-    const allDone = state.dailies.every(d => d.last_completed === today);
-    ddEl.innerHTML = preview.map(d => {
-      const done = d.last_completed === today;
-      return `<div class="task-item ${done ? 'completed' : ''}">
-        <div class="task-check ${done ? 'done' : ''}" onclick="${done ? '' : `completeDaily('${d.id}')`}">${done ? '✓' : ''}</div>
-        <span>${d.title}</span>
-        <span class="ml-auto badge badge-gold">+${d.xp_reward} XP</span></div>`;
-    }).join('') +
-    (state.dailies.length > 5 ? `<p class="text-sm mt-1" style="color:var(--muted)">+${state.dailies.length - 5} more</p>` : '') +
-    (allDone ? '<p class="text-sm mt-2" style="color:var(--green)">🎉 All dailies completed today!</p>' : '');
+    ddEl.innerHTML = todayDailies.slice(0, 3).map(d =>
+      `<div class="task-item"><div class="task-check" onclick="completeDaily('${d.id}')"></div>
+       <span>${d.title}</span>
+       <span class="ml-auto badge badge-gold">+${d.xp_reward} XP</span></div>`
+    ).join('') + (todayDailies.length > 3 ? `<p class="text-sm mt-1" style="color:var(--muted)">+${todayDailies.length - 3} more</p>` : '');
   }
 
   // Active quests
@@ -774,12 +760,12 @@ async function renderDashboard() {
       const pct = steps.length ? Math.round((uq.current_step / steps.length) * 100) : 0;
       return `<div class="task-item flex-col" style="align-items:flex-start">
         <div class="flex w-full items-center gap-2">
-          <span>${q.type === 'group' ? '👥' : '🗡️'}</span>
+          <span>${q.type === 'group' ? '👥' : '⚔️'}</span>
           <span class="font-semibold">${q.title}</span>
           <span class="ml-auto text-xs" style="color:var(--muted)">${uq.current_step}/${steps.length} steps</span>
         </div>
         <div class="xp-bar-track w-full mt-2"><div class="xp-bar-fill" style="width:${pct}%;background:linear-gradient(90deg,#3498db,#2980b9)"></div></div>
-      </div>`
+      </div>`;
     }).join('');
   }
 }
@@ -792,85 +778,45 @@ async function loadDailies() {
   state.dailies = data || [];
 }
 
-function selectDailyDate(dateStr) {
-  state.selectedDailyDate = dateStr;
-  renderDailies();
-}
-
 async function renderDailies() {
   await loadDailies();
   const today = new Date().toISOString().slice(0, 10);
-  if (!state.selectedDailyDate) state.selectedDailyDate = today;
-  const selectedDate = state.selectedDailyDate;
-
-  // Build 7-day date picker
-  const pickerEl = document.getElementById('dailies-date-picker');
-  if (pickerEl) {
-    const days = [];
-    for (let i = 6; i >= 0; i--) {
-      const d = new Date(Date.now() - i * 86400000);
-      const ds = d.toISOString().slice(0, 10);
-      const label = i === 0 ? 'Today' : i === 1 ? 'Yesterday' : d.toLocaleDateString('en-US', { weekday: 'short', month: 'numeric', day: 'numeric' });
-      const active = ds === selectedDate;
-      days.push(`<button onclick="selectDailyDate('${ds}')" style="white-space:nowrap;padding:.25rem .7rem;border-radius:1rem;font-size:.8rem;cursor:pointer;border:1px solid ${active ? 'var(--gold)' : 'var(--border)'};background:${active ? 'var(--gold)' : 'var(--card)'};color:${active ? '#1a1a2e' : 'var(--muted)'};font-weight:${active ? 'bold' : 'normal'}">${label}</button>`);
-    }
-    pickerEl.innerHTML = days.join('');
-  }
-
   const el = document.getElementById('dailies-list');
   if (!state.dailies.length) {
     el.innerHTML = '<div class="card text-center" style="color:var(--muted)"><p>No dailies yet.</p><p class="text-sm mt-1">Add recurring tasks you want to do every day!</p></div>';
     return;
   }
   el.innerHTML = state.dailies.map(d => {
-    const done = d.last_completed === selectedDate;
-      const canComplete = !done;
+    const done = d.last_completed === today;
     return `<div class="task-item ${done ? 'completed' : ''}">
-      <div class="task-check ${done ? 'done' : ''}" onclick="${done ? `uncompleteDaily('${d.id}', '${selectedDate}')` : canComplete ? `completeDaily('${d.id}', '${selectedDate}')` : ''}" title="${done ? 'Click to uncheck' : ''}">${done ? '✓' : ''}</div>
+      <div class="task-check ${done ? 'done' : ''}" onclick="${done ? '' : `completeDaily('${d.id}')`}">
+        ${done ? '✓' : ''}
+      </div>
       <div class="flex-1 min-w-0">
-        <p class="font-medium truncate">${d.title}</p>
-        ${d.description ? `<p class="text-xs mt-0.5 truncate" style="color:var(--muted)">${d.description}</p>` : ''}
+        <div class="font-semibold">${d.title}</div>
+        ${d.description ? `<div class="text-xs mt-0.5" style="color:var(--muted)">${d.description}</div>` : ''}
       </div>
-      <div class="flex items-center gap-2 flex-shrink-0">
-        ${d.streak ? `<span class="badge" style="background:rgba(251,146,60,.15);color:#fb923c">🔥 ${d.streak}</span>` : ''}
-        <span class="badge badge-gold">+${d.xp_reward} XP</span>
-        <button onclick="deleteDaily('${d.id}')" class="btn btn-sm" style="background:rgba(239,68,68,.15);color:#ef4444;padding:.2rem .4rem">🗑</button>
-      </div>
+      ${d.streak > 0 ? `<span class="badge badge-gold streak-flame">🔥 ${d.streak}</span>` : ''}
+      <span class="badge badge-green">+${d.xp_reward} XP</span>
+      <button class="btn btn-danger btn-sm" onclick="deleteDaily('${d.id}')">🗑</button>
     </div>`;
   }).join('');
 }
-async function completeDaily(id, dateStr) {
+
+async function completeDaily(id) {
   const today = new Date().toISOString().slice(0, 10);
-  const targetDate = dateStr || state.selectedDailyDate || today;
   const daily = state.dailies.find(d => d.id === id);
-  if (!daily || daily.last_completed === targetDate) return;
-  const isBackfill = daily.last_completed && daily.last_completed > targetDate;
-  const prevDay = new Date(new Date(targetDate + 'T12:00:00').getTime() - 86400000).toISOString().slice(0, 10);
-  const newStreak = (!isBackfill && daily.last_completed === prevDay) ? (daily.streak || 0) + 1 : (daily.streak || 1);
-  const xpAwarded = daily.xp_reward + newStreak * 2;
-  if (!isBackfill) {
-    await sb.from('dailies').update({ last_completed: targetDate, streak: newStreak }).eq('id', id);
-  }
-  await awardXp(xpAwarded);
-  showToast(`+${xpAwarded} XP! 🔥 Streak: ${newStreak}`, 'xp');
+  if (!daily || daily.last_completed === today) return;
+
+  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+  const newStreak = daily.last_completed === yesterday ? (daily.streak || 0) + 1 : 1;
+
+  await sb.from('dailies').update({ last_completed: today, streak: newStreak }).eq('id', id);
+  await awardXp(daily.xp_reward + newStreak * 2);
+  showToast(`+${daily.xp_reward + newStreak * 2} XP! 🔥 Streak: ${newStreak}`, 'xp');
   await loadProfile();
   updateNav();
   renderDailies();
-  if (document.getElementById('page-dashboard')?.classList.contains('active')) renderDashboard();
-}
-async function uncompleteDaily(id, dateStr) {
-  const today = new Date().toISOString().slice(0, 10);
-  const targetDate = dateStr || state.selectedDailyDate || today;
-  const daily = state.dailies.find(d => d.id === id);
-  if (!daily || daily.last_completed !== targetDate) return;
-  const xpToDeduct = daily.xp_reward + (daily.streak || 1) * 2;
-  await sb.from('dailies').update({ last_completed: null, streak: 0 }).eq('id', id);
-  await awardXp(-xpToDeduct);
-  showToast(`-${xpToDeduct} XP removed`, 'error');
-  await loadProfile();
-  updateNav();
-  renderDailies();
-  if (document.getElementById('page-dashboard')?.classList.contains('active')) renderDashboard();
 }
 
 async function deleteDaily(id) {
@@ -911,8 +857,8 @@ async function renderTodos() {
   }
   el.innerHTML = items.map(t => {
     const badgeClass = t.difficulty === 'easy' ? 'badge-green' : t.difficulty === 'hard' ? 'badge-red' : 'badge-gold';
-    return `<div class="task-item ${t.completed ? 'completed' : ''}"
-      <div class="task-check ${t.completed ? 'done' : ''}" onclick="${t.completed ? '' : `completeTodo('${t.id}')`}"
+    return `<div class="task-item ${t.completed ? 'completed' : ''}">
+      <div class="task-check ${t.completed ? 'done' : ''}" onclick="${t.completed ? '' : `completeTodo('${t.id}')`}">
         ${t.completed ? '✓' : ''}
       </div>
       <div class="flex-1 min-w-0">
@@ -921,8 +867,8 @@ async function renderTodos() {
       </div>
       <span class="badge ${badgeClass}">${DIFFICULTY_LABELS[t.difficulty]}</span>
       <span class="badge badge-green">+${t.xp_reward} XP</span>
-      ${!t.completed ? `<button class="btn btn-danger btn-sm" onclick="deleteTodo('${t.id}')"}>🗑</button>` : ''}
-    </div>`
+      ${!t.completed ? `<button class="btn btn-danger btn-sm" onclick="deleteTodo('${t.id}')">🗑</button>` : ''}
+    </div>`;
   }).join('');
 }
 
@@ -931,7 +877,7 @@ async function completeTodo(id) {
   if (!todo || todo.completed) return;
   await sb.from('todos').update({ completed: true, completed_at: new Date().toISOString() }).eq('id', id);
   await awardXp(todo.xp_reward);
-  showToast(`+${todo.xp_reward} XP! Task conquered! 🗡️`, 'xp');
+  showToast(`+${todo.xp_reward} XP! Task conquered! ⚔️`, 'xp');
   await loadProfile();
   updateNav();
   renderTodos();
@@ -991,14 +937,14 @@ async function renderQuests() {
     const isDone = uq?.completed;
     const pct = steps.length ? Math.round((currentStep / steps.length) * 100) : 0;
 
-    return `<div class="card ${isDone ? 'opacity-60' : ''}"
+    return `<div class="card ${isDone ? 'opacity-60' : ''}">
       <div class="flex items-start gap-3 mb-3">
-        <span style="font-size:1.5rem">${q.type === 'group' ? '👥' : '🗡️'}</span>
+        <span style="font-size:1.5rem">${q.type === 'group' ? '👥' : '⚔️'}</span>
         <div class="flex-1">
           <div class="font-bold text-lg">${q.title}</div>
           ${q.description ? `<div class="text-sm mt-1" style="color:var(--muted)">${q.description}</div>` : ''}
           <div class="flex gap-2 mt-2">
-            <span class="badge ${q.type === 'group' ? 'badge-blue' : 'badge-purple'}">${q.type === 'group' ? '👥 Group' : '🗡️ Solo'}</span>
+            <span class="badge ${q.type === 'group' ? 'badge-blue' : 'badge-purple'}">${q.type === 'group' ? '👥 Group' : '⚔️ Solo'}</span>
             <span class="badge badge-gold">🏆 ${q.xp_reward} XP</span>
             ${isDone ? '<span class="badge badge-green">✅ Complete!</span>' : ''}
           </div>
@@ -1024,7 +970,7 @@ async function renderQuests() {
       ` : ''}
 
       <div class="flex gap-2">
-        ${!uq && !isDone ? `<button class="btn btn-primary btn-sm" onclick="startQuest('${q.id}')">🗡️ Start Quest</button>` : ''}
+        ${!uq && !isDone ? `<button class="btn btn-primary btn-sm" onclick="startQuest('${q.id}')">⚔️ Start Quest</button>` : ''}
         ${isDone ? '<span style="color:var(--green);font-size:.9rem">✅ Quest Complete!</span>' : ''}
         ${q.created_by === state.user.id ? `<button class="btn btn-danger btn-sm ml-auto" onclick="deleteQuest('${q.id}')">🗑</button>` : ''}
       </div>
@@ -1034,7 +980,7 @@ async function renderQuests() {
 
 async function startQuest(questId) {
   await sb.from('user_quests').insert({ user_id: state.user.id, quest_id: questId, current_step: 0 });
-  showToast('Quest started! Good luck, hero! 🗡️');
+  showToast('Quest started! Good luck, hero! ⚔️');
   renderQuests();
 }
 
@@ -1060,75 +1006,69 @@ async function deleteQuest(id) {
 }
 
 // ================================================================
-// SPRITE EDITOR
+// SPRITE RENDERER (image-based)
 // ================================================================
-function initSpriteEditor() {
-  // Type buttons
-  const typeEl = document.getElementById('type-buttons');
-  if (!typeEl) return;
-  typeEl.innerHTML = SPRITE_TYPES.map(t =>
-    `<button class="sprite-type-btn" id="type-${t.id}" onclick="setSpriteType('${t.id}')">${t.icon} ${t.label}</button>`
-  ).join('');
-
-  // Color swatches
-  renderSwatches('skin-swatches',   SKIN_COLORS,   'skinColor');
-  renderSwatches('hair-swatches',   HAIR_COLORS,   'hairColor');
-  renderSwatches('outfit-swatches', OUTFIT_COLORS, 'outfitColor');
-  renderSwatches('accent-swatches', ACCENT_COLORS, 'accentColor');
+function renderSpriteImg(cfg, size = 64) {
+  const key = (cfg && cfg.preset) || 'link';
+  const s = PRESET_SPRITES[key] || PRESET_SPRITES['link'];
+  return `<img src="${s.img}" width="${size}" height="${size}" style="image-rendering:pixelated;object-fit:contain" alt="${s.name}" />`;
 }
 
-function renderSwatches(containerId, colors, key) {
-  const el = document.getElementById(containerId);
-  if (!el) return;
-  el.innerHTML = colors.map(c =>
-    `<div class="color-swatch" id="swatch-${key}-${c.replace('#','')}"
-      style="background:${c}" onclick="setSpriteColor('${key}','${c}')"></div>`
-  ).join('');
-}
+// ================================================================
+// SPRITE EDITOR (picker)
+// ================================================================
+function renderSpriteEditor() {
+  const gridEl = document.getElementById('sprite-grid');
+  if (!gridEl) return;
+  const cfg = state.editSprite || {};
+  const selected = cfg.preset || 'link';
 
-function renderSpritePicker() {
-  const currentSprite = (state.profile && state.profile.avatar_json && state.profile.avatar_json.sprite) || 'link';
-  const grid = document.getElementById('sprite-picker-grid');
-  if (!grid) return;
-  grid.innerHTML = Object.entries(PRESET_SPRITES).map(function(entry) {
-    const key = entry[0], sprite = entry[1];
-    const selected = key === currentSprite;
-    return '<div class="card text-center" style="padding:12px;border:2px solid ' + (selected ? 'var(--gold)' : 'var(--border)') + ';cursor:pointer" onclick="selectSprite(\'' + key + '\')">'  
-      + '<img src="' + sprite.img + '" style="width:80px;height:80px;object-fit:contain;margin:0 auto 8px;display:block;image-rendering:pixelated;" alt="' + sprite.name + '">'
-      + '<div style="font-size:.85rem;font-weight:bold">' + sprite.name + '</div>'
-      + '<div style="font-size:.7rem;color:var(--muted)">' + sprite.title + '</div>'
-      + (selected ? '<div style="color:var(--gold);font-size:.75rem;margin-top:4px">✓ Selected</div>' : '')
-      + '</div>';
+  gridEl.innerHTML = SPRITE_KEYS.map(key => {
+    const s = PRESET_SPRITES[key];
+    const isSelected = key === selected;
+    return `<div onclick="selectSprite('${key}')" id="sprite-card-${key}"
+      style="cursor:pointer;border-radius:10px;padding:10px;text-align:center;border:2px solid ${isSelected ? 'var(--gold)' : 'var(--border)'};background:${isSelected ? 'rgba(241,196,15,0.1)' : 'var(--card)'};transition:all 0.2s">
+      <img src="${s.img}" width="72" height="72" style="image-rendering:pixelated;object-fit:contain" alt="${s.name}" />
+      <div style="font-size:0.75rem;font-weight:bold;color:${isSelected ? 'var(--gold)' : 'var(--text)'};margin-top:6px">${s.name}</div>
+      <div style="font-size:0.65rem;color:var(--muted);margin-top:2px">${s.title}</div>
+    </div>`;
   }).join('');
-}
 
-function setSpriteType(type) {
-  state.editSprite = { ...(state.editSprite || {}), type };
-  SPRITE_TYPES.forEach(t => document.getElementById(`type-${t.id}`)?.classList.toggle('selected', t.id === type));
   updateSpritePreview();
 }
 
-function setSpriteColor(key, color) {
-  state.editSprite = { ...(state.editSprite || {}), [key]: color };
-  document.querySelectorAll(`[id^="swatch-${key}-"]`).forEach(sw => sw.classList.remove('selected'));
-  document.getElementById(`swatch-${key}-${color.replace('#','')}`)?.classList.add('selected');
+function selectSprite(key) {
+  state.editSprite = { ...(state.editSprite || {}), preset: key };
+  // Update highlight
+  SPRITE_KEYS.forEach(k => {
+    const card = document.getElementById(`sprite-card-${k}`);
+    if (!card) return;
+    const isSelected = k === key;
+    card.style.borderColor = isSelected ? 'var(--gold)' : 'var(--border)';
+    card.style.background = isSelected ? 'rgba(241,196,15,0.1)' : 'var(--card)';
+    card.querySelector('div').style.color = isSelected ? 'var(--gold)' : 'var(--text)';
+  });
   updateSpritePreview();
 }
 
 function updateSpritePreview() {
   const cfg = state.editSprite || {};
-  const previewEl = document.getElementById('sprite-preview');
-  const nameEl    = document.getElementById('sprite-type-name');
-  // sprite preview removed - now using preset sprites
+  const key = cfg.preset || 'link';
+  const s = PRESET_SPRITES[key] || PRESET_SPRITES['link'];
+  const previewEl  = document.getElementById('sprite-preview');
+  const nameEl     = document.getElementById('sprite-type-name');
+  const titleEl    = document.getElementById('sprite-type-title');
+  if (previewEl) previewEl.innerHTML = `<img src="${s.img}" width="128" height="128" style="image-rendering:pixelated;object-fit:contain" alt="${s.name}" />`;
+  if (nameEl)    nameEl.textContent  = s.name;
+  if (titleEl)   titleEl.textContent = s.title;
 }
 
-async function selectSprite(key) {
-  const { error } = await sb.from('profiles').update({ avatar_json: { sprite: key } }).eq('id', state.user.id);
+async function saveSprite() {
+  const { error } = await sb.from('profiles').update({ avatar_json: state.editSprite }).eq('id', state.user.id);
   if (error) { showToast('Failed to save. Try again.', 'error'); return; }
-  state.profile = { ...state.profile, avatar_json: { sprite: key } };
+  state.profile = { ...state.profile, avatar_json: state.editSprite };
   updateNav();
-  renderSpritePicker();
-  showToast('Hero selected! ⚔️', 'xp');
+  showToast('Hero saved! ✨');
 }
 
 // ================================================================
@@ -1159,13 +1099,11 @@ async function renderLeaderboard() {
     }
     lbEl.innerHTML = members.map((m, i) => {
       const rankIcon = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i + 1}`;
-      const _sk = (m.avatar_json && m.avatar_json.sprite) || 'link';
-      const _sp = PRESET_SPRITES[_sk] || PRESET_SPRITES.link;
-      const spriteHtml = '<img src="' + _sp.img + '" style="width:36px;height:36px;object-fit:contain;image-rendering:pixelated" alt="' + _sp.name + '">';
+      const spriteHtml = renderSpriteImg(m.avatar_json || {}, 48);
       const { progress } = getXpProgress(m.xp || 0, m.level || 1);
-      return `<div class="lb-row ${m.id === state.user.id ? 'card-gold' : ''}"
+      return `<div class="lb-row ${m.id === state.user.id ? 'card-gold' : ''}">
         <div class="lb-rank">${rankIcon}</div>
-        <div style="image-rendering:pixelated">${spriteHtml}</div>
+        <div>${spriteHtml}</div>
         <div class="flex-1 min-w-0">
           <div class="font-bold ${m.id === state.user.id ? 'text-yellow-400' : ''}">${m.username} ${m.id === state.user.id ? '(you)' : ''}</div>
           <div class="text-xs" style="color:var(--muted)">Level ${m.level || 1} · ${m.xp || 0} XP</div>
@@ -1181,7 +1119,7 @@ async function renderLeaderboard() {
         <div class="card">
           <h4 class="font-bold text-yellow-400 mb-2">Create Party</h4>
           <input class="input mb-2" id="party-name-input" placeholder="Party name" />
-          <button class="btn btn-primary w-full" onclick="createParty()">🗡️ Create Party</button>
+          <button class="btn btn-primary w-full" onclick="createParty()">⚔️ Create Party</button>
         </div>
         <div class="card">
           <h4 class="font-bold text-yellow-400 mb-2">Join Party</h4>
@@ -1212,7 +1150,7 @@ async function joinParty() {
   if (!party) { showToast('Party not found. Check the code!', 'error'); return; }
   await sb.from('profiles').update({ party_code: code }).eq('id', state.user.id);
   await loadProfile();
-  showToast('You joined the party! 🗡️ Let the games begin!');
+  showToast('You joined the party! ⚔️ Let the games begin!');
   renderLeaderboard();
 }
 
@@ -1264,13 +1202,13 @@ function openModal(type) {
       </div>`;
   } else if (type === 'quest') {
     content.innerHTML = `
-      <h3 class="text-xl font-bold text-yellow-400 mb-4">🗡️ New Quest</h3>
+      <h3 class="text-xl font-bold text-yellow-400 mb-4">⚔️ New Quest</h3>
       <div class="mb-3"><input class="input" id="m-quest-title" placeholder="Quest title" /></div>
-      <div class="mb-3"><input class="input" id="m-quest-desc" plac eholder="Quest description (optional)" /></div>
+      <div class="mb-3"><input class="input" id="m-quest-desc" placeholder="Quest description (optional)" /></div>
       <div class="mb-3">
         <label class="text-sm mb-1 block" style="color:var(--muted)">Quest Type</label>
         <select class="input" id="m-quest-type">
-          <option value="solo">🗡️ Solo Quest</option>
+          <option value="solo">⚔️ Solo Quest</option>
           <option value="group">👥 Group Quest (party)</option>
         </select>
       </div>
@@ -1289,7 +1227,7 @@ function openModal(type) {
         </select>
       </div>
       <div class="flex gap-2">
-        <button class="btn btn-primary flex-1" onclick="addQuest()">🗡️ Create Quest</button>
+        <button class="btn btn-primary flex-1" onclick="addQuest()">⚔️ Create Quest</button>
         <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
       </div>`;
   }
@@ -1336,7 +1274,7 @@ async function addQuest() {
   }
 
   await sb.from('quests').insert({ title, description: desc || null, type, steps, xp_reward: xp, party_id: partyId, created_by: state.user.id });
-  closeModal(); showToast('Quest created! Your legend begins 🗡️');
+  closeModal(); showToast('Quest created! Your legend begins ⚔️');
   renderQuests();
 }
 
