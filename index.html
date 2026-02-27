@@ -548,6 +548,7 @@ let sb, state = {
   dailies: [], todos: [], quests: [], userQuests: [],
   todoFilter: 'active', questFilter: 'active',
   editSprite: null,
+  dailyViewDate: null,
 };
 
 // ================================================================
@@ -781,52 +782,81 @@ async function loadDailies() {
 async function renderDailies() {
   await loadDailies();
   const today = new Date().toISOString().slice(0, 10);
+  if (!state.dailyViewDate) state.dailyViewDate = today;
+  const viewDate = state.dailyViewDate;
   const el = document.getElementById('dailies-list');
+
+  const days = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(Date.now() - i * 86400000);
+    const dateStr = d.toISOString().slice(0, 10);
+    const label = i === 0 ? 'Today' : d.toLocaleDateString('en-US', { weekday: 'short' });
+    days.push({ dateStr, label });
+  }
+  const pickerHtml = '<div class="flex gap-1 mb-4">' + days.map(d =>
+    '<button class="btn btn-sm ' + (d.dateStr === viewDate ? 'btn-primary' : 'btn-secondary') + '" onclick="setDailyViewDate(\'' + d.dateStr + '\')" style="flex:1;min-width:0;font-size:.72rem;padding:.25rem .2rem">' + d.label + '</button>'
+  ).join('') + '</div>';
+
   if (!state.dailies.length) {
-    el.innerHTML = '<div class="card text-center" style="color:var(--muted)"><p>No dailies yet.</p><p class="text-sm mt-1">Add recurring tasks you want to do every day!</p></div>';
+    el.innerHTML = pickerHtml + '<div class="card text-center" style="color:var(--muted)"><p>No dailies yet.</p><p class="text-sm mt-1">Add recurring tasks you want to do every day!</p></div>';
     return;
   }
-  el.innerHTML = state.dailies.map(d => {
-    const done = d.last_completed === today;
-    return `<div class="task-item ${done ? 'completed' : ''}">
-      <div class="task-check ${done ? 'done' : ''}" onclick="${done ? '' : `completeDaily('${d.id}')`}">
-        ${done ? '✓' : ''}
-      </div>
-      <div class="flex-1 min-w-0">
-        <div class="font-semibold">${d.title}</div>
-        ${d.description ? `<div class="text-xs mt-0.5" style="color:var(--muted)">${d.description}</div>` : ''}
-      </div>
-      ${d.streak > 0 ? `<span class="badge badge-gold streak-flame">🔥 ${d.streak}</span>` : ''}
-      <span class="badge badge-green">+${d.xp_reward} XP</span>
-      <button class="btn btn-danger btn-sm" onclick="deleteDaily('${d.id}')">🗑</button>
-    </div>`;
+  el.innerHTML = pickerHtml + state.dailies.map(d => {
+    const done = d.last_completed === viewDate;
+    const checkAction = done ? "uncompleteDaily('" + d.id + "')" : "completeDaily('" + d.id + "')";
+    const checkTitle = done ? 'Click to undo' : 'Click to complete';
+    return '<div class="task-item ' + (done ? 'completed' : '') + '">' +
+      '<div class="task-check ' + (done ? 'done' : '') + '" onclick="' + checkAction + '" title="' + checkTitle + '">' + (done ? '&#10003;' : '') + '</div>' +
+      '<div class="flex-1 min-w-0"><div class="font-semibold">' + d.title + '</div>' +
+      (d.description ? '<div class="text-xs mt-0.5" style="color:var(--muted)">' + d.description + '</div>' : '') +
+      '</div>' +
+      (d.streak > 0 ? '<span class="badge badge-gold streak-flame">&#128293; ' + d.streak + '</span>' : '') +
+      '<span class="badge badge-green">+' + d.xp_reward + ' XP</span>' +
+      '<button class="btn btn-danger btn-sm" onclick="deleteDaily(\'' + d.id + '\')">&#128465;</button>' +
+      '</div>';
   }).join('');
+}
+
+function setDailyViewDate(date) {
+  state.dailyViewDate = date;
+  renderDailies();
 }
 
 async function completeDaily(id) {
   const today = new Date().toISOString().slice(0, 10);
+  const viewDate = state.dailyViewDate || today;
   const daily = state.dailies.find(d => d.id === id);
-  if (!daily || daily.last_completed === today) return;
-
-  // Optimistically mark as done in local state immediately — prevents awarding
-  // XP multiple times if the user clicks again before the async DB call returns.
+  if (!daily || daily.last_completed === viewDate) return;
   const prevLastCompleted = daily.last_completed;
-  daily.last_completed = today;
-
-  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
-  const newStreak = prevLastCompleted === yesterday ? (daily.streak || 0) + 1 : 1;
+  daily.last_completed = viewDate;
+  const dayBefore = new Date(new Date(viewDate + 'T12:00:00Z').getTime() - 86400000).toISOString().slice(0, 10);
+  const newStreak = prevLastCompleted === dayBefore ? (daily.streak || 0) + 1 : 1;
   daily.streak = newStreak;
-
-  await sb.from('dailies').update({ last_completed: today, streak: newStreak }).eq('id', id);
+  await sb.from('dailies').update({ last_completed: viewDate, streak: newStreak }).eq('id', id);
   await awardXp(daily.xp_reward + newStreak * 2);
-  showToast(`+${daily.xp_reward + newStreak * 2} XP! 🔥 Streak: ${newStreak}`, 'xp');
+  showToast('+' + (daily.xp_reward + newStreak * 2) + ' XP! Streak: ' + newStreak, 'xp');
   await loadProfile();
   updateNav();
   renderDailies();
-  // Refresh dashboard if it's currently visible (it has its own daily shortcut buttons)
-  if (document.getElementById('page-dashboard')?.classList.contains('active')) {
-    renderDashboard();
-  }
+  if (document.getElementById('page-dashboard')?.classList.contains('active')) renderDashboard();
+}
+
+async function uncompleteDaily(id) {
+  const daily = state.dailies.find(d => d.id === id);
+  if (!daily || !daily.last_completed) return;
+  daily.last_completed = null;
+  const newStreak = Math.max(0, (daily.streak || 1) - 1);
+  daily.streak = newStreak;
+  await sb.from('dailies').update({ last_completed: null, streak: newStreak }).eq('id', id);
+  const newXp = Math.max(0, (state.profile.xp || 0) - daily.xp_reward);
+  const newLevel = getLevelFromXp(newXp);
+  await sb.from('profiles').update({ xp: newXp, level: newLevel }).eq('id', state.user.id);
+  state.profile.xp = newXp;
+  state.profile.level = newLevel;
+  showToast('Daily unchecked. -' + daily.xp_reward + ' XP', 'error');
+  updateNav();
+  renderDailies();
+  if (document.getElementById('page-dashboard')?.classList.contains('active')) renderDashboard();
 }
 
 async function deleteDaily(id) {
@@ -1291,6 +1321,17 @@ async function addQuest() {
 // ================================================================
 // XP + LEVELING
 // ================================================================
+function getLevelFromXp(xp) {
+  return Math.floor(Math.sqrt((xp || 0) / 50)) + 1;
+}
+
+function getXpProgress(xp, level) {
+  const current = Math.pow(level - 1, 2) * 50;
+  const next    = Math.pow(level, 2) * 50;
+  const progress = next > current ? Math.min(100, Math.round(((xp - current) / (next - current)) * 100)) : 100;
+  return { current, next, progress };
+}
+
 async function awardXp(amount) {
   const { data, error } = await sb.rpc('award_xp', { p_user_id: state.user.id, xp_amount: amount });
   if (error) {
